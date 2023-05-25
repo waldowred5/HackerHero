@@ -1,49 +1,44 @@
-import {useRef, useState} from 'react'
-import logoVite from './assets/logo-vite.svg'
-import logoElectron from './assets/logo-electron.svg'
-import './App.css'
+import { Loader } from '@react-three/drei';
+import { Leva } from 'leva';
+import { KeyboardInputManager } from './components/managers/keyboardInputManager/KeyboardInputManager';
+import { InterfaceManager } from './components/ui/interfaceManager/InterfaceManager';
+import { Canvas } from '@react-three/fiber';
+import { SceneManager } from './components/managers/sceneManager/SceneManager';
+import { useEffect } from 'react';
 
-// console.log('[App.tsx]', `Hello world from Electron ${process.versions.electron}!`)
-
-function App() {
-  const [count, setCount] = useState(0)
-  const titleInputRef = useRef<HTMLInputElement | null>(null);
-
-  // const setButton = document.getElementById('btn')
-  // const titleInput: HTMLInputElement = document.getElementById('title')! as HTMLInputElement
-  // setButton.addEventListener('click', () => {
-  //   const title = titleInput.value
-  //   window.electronAPI.setTitle(title)
-  // });
+export const App = () => {
+  useEffect(() => {
+    document.addEventListener('contextmenu', event => event.preventDefault());
+  }, []);
 
   return (
-    <div className='App'>
-      <div className='logo-box'>
-        <a href='https://github.com/electron-vite/electron-vite-react' target='_blank'>
-          <img src={logoVite} className='logo vite' alt='Electron + Vite logo' />
-          <img src={logoElectron} className='logo electron' alt='Electron + Vite logo' />
-        </a>
-      </div>
-      <h1>Electron + Vite + React</h1>
-      <div className='card'>
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className='read-the-docs'>
-        Click on the Electron + Vite logo to learn more
-      </p>
-      <div className='flex-center'>
-        Place static files into the<code>/public</code> folder <img style={{ width: '5em' }} src='./node.svg' alt='Node logo' />
-      </div>
-      Title: <input id="title" ref={titleInputRef}/>
-      <button id="btn" type="button" onClick={() => window.electronAPI.setTitle(titleInputRef.current.value)}>Set</button>
-      <script src="./renderer.js"></script>
-    </div>
-  )
-}
+    <>
+      <Loader/>
 
-export default App
+      <Leva
+        collapsed={true}
+        hidden={false}
+      />
+
+      <KeyboardInputManager>
+        <InterfaceManager/>
+
+        {/* TODO: Extract camera to camera manager component */}
+        <Canvas
+          shadows
+          // style={{ position: 'static' }}
+          camera={{
+            fov: 75,
+            near: 0.1,
+            far: 200,
+            position: [0, 0, 5],
+          }}
+        >
+          <SceneManager/>
+        </Canvas>
+      </KeyboardInputManager>
+    </>
+  );
+};
+
+export default App;
