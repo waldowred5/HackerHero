@@ -6,6 +6,7 @@ import { useFrame } from '@react-three/fiber';
 import { useKeyboardControls } from '@react-three/drei';
 import { Physics, RapierRigidBody, RigidBody } from '@react-three/rapier';
 import { RESOURCE } from './types';
+import animationInterval from '@/utils/animation-interval';
 
 export const NetworkController = () => {
   const body = useRef<RapierRigidBody>(null);
@@ -39,7 +40,9 @@ export const NetworkController = () => {
     removeHackBot,
 
     // Resources
+    resourcesPerSecond,
     setResource,
+    updateResource,
 
     // Time
     startMatch,
@@ -52,7 +55,19 @@ export const NetworkController = () => {
   useEffect(() => {
     generateNetwork();
     startMatch();
-  }, [vertexNumber, vertexPlacementChaosFactor, maxEdgeLengthPercentage]);
+    const abortController = new AbortController();
+    animationInterval(
+      1000,
+      abortController.signal,
+      () => Object
+        .values(RESOURCE)
+        .forEach((resource) =>
+          resourcesPerSecond[resource]
+          && updateResource(resource, resourcesPerSecond[resource])
+        )
+    );
+    return () => abortController.abort();
+   }, [vertexNumber, vertexPlacementChaosFactor, maxEdgeLengthPercentage]);
 
   // Debug
   useControls('Network Model', {
