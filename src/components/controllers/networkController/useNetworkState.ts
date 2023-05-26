@@ -205,7 +205,8 @@ export default create<NetworkState>((set, get) => {
           const edges = array.map((fromVector: Vertex, innerIndex) => {
             const uuidTo = array[innerIndex].uuid;
 
-            if (outerIndex === innerIndex) {
+            if (outerIndex >= innerIndex) {
+            // if (outerIndex === innerIndex) {
               return;
             }
 

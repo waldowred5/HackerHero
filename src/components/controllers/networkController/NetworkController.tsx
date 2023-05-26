@@ -3,7 +3,7 @@ import { NetworkModel } from '../../canvas/organisms/networkModel/NetworkModel';
 import useNetworkState from './useNetworkState';
 import { button, folder, useControls } from 'leva';
 import { useFrame } from '@react-three/fiber';
-import { useKeyboardControls } from '@react-three/drei';
+import { OrbitControls, useKeyboardControls } from '@react-three/drei';
 import { Physics, RapierRigidBody, RigidBody } from '@react-three/rapier';
 import { RESOURCE } from './types';
 import animationInterval from '@/utils/animation-interval';
@@ -137,6 +137,7 @@ export const NetworkController = () => {
 
   return (
     <Suspense fallback={null}>
+      <OrbitControls />
       <Physics gravity={[0, 10, 0]}>
         <RigidBody
           ref={body}
