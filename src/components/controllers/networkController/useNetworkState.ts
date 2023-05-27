@@ -28,7 +28,7 @@ export default create<NetworkState>((set, get) => {
 
     // Resources
     resources: {
-      [RESOURCE.HACKING_POWER]: 375,
+      [RESOURCE.HACKING_POWER]: 375000,
       [RESOURCE.COMPUTE_POWER]: 0,
     },
 
@@ -54,6 +54,10 @@ export default create<NetworkState>((set, get) => {
         uuid: uuidv4(),
         vertex: hackBotVertex,
       };
+
+      if (get().hackBots.find((existing) => existing.vertex.uuid === hackBotVertex.uuid)) {
+        return;
+      }
 
       // Pay resource cost
       const canAffordNewHackBot = get().resources[newHackBot.resourceRequirement] >= newHackBot.resourceCost;
@@ -126,6 +130,10 @@ export default create<NetworkState>((set, get) => {
                     return {
                       ...edge,
                       highlight: true,
+                      contest: {
+                        ...edge?.contest,
+                        [PLAYER.PLAYER_1]: 0,
+                      }
                     };
                   }
 
@@ -141,6 +149,8 @@ export default create<NetworkState>((set, get) => {
           vertices,
         };
       });
+
+      console.log(hackBotVertex.uuid, get());
     },
 
     removeHackBot: (uuid: string) => {
@@ -292,6 +302,50 @@ export default create<NetworkState>((set, get) => {
           vertexNumber: newVertexNumber,
         };
       });
+    },
+
+    // TODO: name pending
+    claimVertex: ({ vertex: claimingVertex, player } : {vertex: Vertex, player: PLAYER}) => {
+      //TODO: quit hoggling all the nodes player 1
+
+      set((state) => {
+        const vertices = state.vertices.map((vertex) => {
+          if (vertex.uuid === claimingVertex.uuid) {
+            return {
+              ...vertex,
+              highlight: true,
+            };
+          }
+
+          return vertex;
+        });
+
+        const adjacencyMap = Object.entries(state.adjacencyMap).reduce(
+          (acc, [uuid, { edges }]) => {
+            return {
+              ...acc,
+              [uuid]: {
+                edges: edges.map((edge) => {
+                  if (edge.uuid === claimingVertex.uuid) {
+                    return {
+                      ...edge,
+                      highlight: true,
+                    };
+                  }
+
+                  return edge;
+                }),
+              },
+            };
+          }, {}
+        );
+
+        return {
+          adjacencyMap,
+          vertices,
+        };
+      });
+
     },
 
     // Orb Actions

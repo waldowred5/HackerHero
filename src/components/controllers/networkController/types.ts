@@ -6,6 +6,7 @@ export type AdjacencyEdge = {
   toVector: Vertex,
   uuid: string,
   highlight: boolean,
+  contest: any, // :chefs-kiss:
 }
 
 export type AdjacencyMap = {
@@ -135,6 +136,7 @@ export interface NetworkState {
       vertexNumber,
     }: GenerateVerticesProps
   ) => Vertex[],
+  claimVertex: ({vertex: any, player: any}) => any,
   updateVertexPlacementChaosFactor: (newVertexPlacementChaosFactor: number) => void,
   updateOrbRadius: (newRadius: number) => void,
   updateOrbOpacity: (newOpacity: number) => void,

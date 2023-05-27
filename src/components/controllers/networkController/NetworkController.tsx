@@ -5,8 +5,9 @@ import { button, folder, useControls } from 'leva';
 import { useFrame } from '@react-three/fiber';
 import { useKeyboardControls } from '@react-three/drei';
 import { Physics, RapierRigidBody, RigidBody } from '@react-three/rapier';
-import { RESOURCE } from './types';
-import animationInterval from '@/utils/animation-interval';
+import { PLAYER, RESOURCE } from './types';
+import animationInterval from '../../../utils/animation-interval';
+import getLeaves from '../../../utils/get-leaves';
 
 export const NetworkController = () => {
   const body = useRef<RapierRigidBody>(null);
@@ -27,6 +28,7 @@ export const NetworkController = () => {
 
     // Vertices
     vertices,
+    claimVertex,
 
     // Orb
     orbOpacity,
@@ -68,6 +70,19 @@ export const NetworkController = () => {
     );
     return () => abortController.abort();
    }, [vertexNumber, vertexPlacementChaosFactor, maxEdgeLengthPercentage]);
+
+  useEffect(() => {
+    console.log('re-ran so far away!!', adjacencyMap);
+
+    const intervalId = setInterval(() => {
+      console.log('hello', );
+
+      const unvisited = getLeaves(adjacencyMap, vertices, hackBots.map(({ vertex }) => vertex));
+      console.log(unvisited);
+      unvisited.forEach((vertex) => claimVertex({ vertex, player: PLAYER.PLAYER_1 }));
+    }, 1000);
+    return () => clearInterval(intervalId);
+  }, [adjacencyMap, hackBots]);
 
   // Debug
   useControls('Network Model', {
