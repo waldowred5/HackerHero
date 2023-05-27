@@ -1,7 +1,16 @@
 import { create } from 'zustand';
 import * as THREE from 'three';
 import { v4 as uuidv4 } from 'uuid';
-import { HACK_BOT_CLASS, HackBot, HackBotProps, MATCH_PHASE, NetworkState, PLAYER, RESOURCE, Vertex } from './types';
+import {
+  HACK_BOT_CLASS,
+  HackBot,
+  HackBotProps,
+  MATCH_PHASE,
+  NetworkState,
+  PLAYER,
+  RESOURCE,
+  Vertex
+} from './types';
 
 export default create<NetworkState>((set, get) => {
   return {
@@ -9,19 +18,20 @@ export default create<NetworkState>((set, get) => {
 
     // General
     radius: 2,
-    vertexNumber: 28,
+    vertexNumber: 14,
     vertexPlacementChaosFactor: 350,
 
     // Edges (NETCONs)
     adjacencyMap: {},
-    maxEdgeLengthPercentage: 0.95,
+    edgeNeighbours: {},
+    maxEdgeLengthPercentage: 1.0,
 
     // Vertices (HAKVEKs)
     vertices: [],
 
     // Orb
     orbOpacity: 0.96,
-    orbRadius: 1.8,
+    orbRadius: 1.6,
 
     // HackBots
     hackBots: [],
@@ -183,6 +193,14 @@ export default create<NetworkState>((set, get) => {
         };
       });
 
+      // set((state) => {
+      //   const edgeNeighbours = state.generateEdgeNeighbours(state.adjacencyMap);
+      //
+      //   return {
+      //     edgeNeighbours,
+      //   };
+      // });
+
       set(() => {
         return {
           hackBots: [],
@@ -198,15 +216,16 @@ export default create<NetworkState>((set, get) => {
       }
     ) => {
       console.log('Generating Adjacency Map...');
+      // For storing edgeIds to apply the same uuid to both edge directions in the edge pair
+      const edgeIdsMap = {};
+
       return vertices.reduce(
-        (acc, toVector: Vertex, outerIndex, array) => {
+        (acc, fromVector: Vertex, outerIndex, array) => {
           const uuidFrom = array[outerIndex].uuid;
 
-          const edges = array.map((fromVector: Vertex, innerIndex) => {
-            const uuidTo = array[innerIndex].uuid;
-
-            if (outerIndex >= innerIndex) {
-            // if (outerIndex === innerIndex) {
+          const edges = array.map((toVector: Vertex, innerIndex) => {
+            // if (outerIndex >= innerIndex) {
+            if (outerIndex === innerIndex) {
               return;
             }
 
@@ -216,11 +235,21 @@ export default create<NetworkState>((set, get) => {
               return;
             }
 
+            // Check if an edge uuid has already been generated
+            let edgeId = edgeIdsMap[`${fromVector.uuid}:${toVector.uuid}`];
+
+            // If no edge uuid set create dual paired keys for the next edgeId search
+            if (!edgeId) {
+              edgeId = uuidv4();
+              edgeIdsMap[`${fromVector.uuid}:${toVector.uuid}`] = edgeId;
+              edgeIdsMap[`${toVector.uuid}:${fromVector.uuid}`] = edgeId;
+            }
+
             return {
               distance: fromVector.vector.distanceTo(toVector.vector),
               toVector,
               fromVector,
-              uuid: uuidTo,
+              uuid: edgeId,
               highlight: false,
             };
           }).filter((edge) => !!edge);
@@ -233,6 +262,50 @@ export default create<NetworkState>((set, get) => {
           };
         }, {});
     },
+
+    // generateEdgeNeighbours: (adjacencyMap) => {
+    //   console.log('Generating Edge Neighbours...');
+    //
+    //   const edgeNeighboursEg = {
+    //     ['uuid']: {
+    //       fromVector: { vector: 'd', uuid: 'd' },
+    //       toVector: { vector: 's', uuid: 'lmao' },
+    //     }
+    //   };
+    //
+    //   const visited: EdgeNeighbours[] = [];
+    //
+    //   const edgeNeighbours = Object.
+
+    /*
+    const edgeNeighbours = Object.keys(adjacencyMap).map((vertex) => {
+      return adjacencyMap[vertex].edges.reduce(
+        (acc, [uuid, { edges }]) => {
+          return {
+            ...acc,
+            [uuid]: edges.reduce(
+              (acc, { fromVector, toVector, uuid: edgeId }) => {
+                return {
+                  ...acc,
+                  [edgeId]: {
+                    fromVector: {
+                      vector: fromVector.vector,
+                      uuid: fromVector.uuid,
+                    },
+                    toVector: {
+                      vector: toVector.vector,
+                      uuid: toVector.uuid,
+                    },
+                  },
+                };
+              }, {}),
+          };
+        });
+    });
+    */
+
+    // return edgeNeighbours;
+    // },
 
     updateMaxEdgeLengthPercentage: (newMaxEdgeLengthPercentage: number) => {
       set(() => {

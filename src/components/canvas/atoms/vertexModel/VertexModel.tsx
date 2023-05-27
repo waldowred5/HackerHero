@@ -60,7 +60,7 @@ export const VertexModel = ({ createHackBot, removeHackBot, vertex, uuid }: Prop
             onPointerLeave={(event) => changeVertexColor(event, highlight ? 'blue' : 'grey')}
           >
             <sphereGeometry args={[0.12, 32, 32]}/>
-            <meshStandardMaterial
+            <meshBasicMaterial
               color={highlight ? 'blue' : 'grey'}
               side={THREE.DoubleSide}
             />

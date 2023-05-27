@@ -14,6 +14,13 @@ export type AdjacencyMap = {
   }
 }
 
+export type EdgeNeighbours = {
+  [key: string]: {
+    fromVector: Vertex,
+    toVector: Vertex,
+  },
+}
+
 export interface HackBotProps {
   vertex: Vertex,
 }
@@ -84,6 +91,7 @@ export interface NetworkState {
 
   // Edges (NETCONs)
   adjacencyMap: AdjacencyMap,
+  edgeNeighbours: EdgeNeighbours,
   maxEdgeLengthPercentage: number,
 
   // Vertices (HAKVEKs)
@@ -128,6 +136,7 @@ export interface NetworkState {
       vertices,
     }: GenerateAdjacencyMapProps
   ) => AdjacencyMap,
+  generateEdgeNeighbours: (adjacencyMap: AdjacencyMap) => EdgeNeighbours,
   generateVertices: (
     {
       radius,

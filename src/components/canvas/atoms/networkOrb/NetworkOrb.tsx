@@ -15,7 +15,7 @@ export const NetworkOrb = ({ orbOpacity, updateOrbRadius, orbRadius, updateOrbOp
   // Debug
   useControls('NetworkOrb', {
     opacity: {
-      value: 0.8,
+      value: orbOpacity,
       min: 0,
       max: 1,
       onChange: (value: number) => {
@@ -23,7 +23,7 @@ export const NetworkOrb = ({ orbOpacity, updateOrbRadius, orbRadius, updateOrbOp
       }
     },
     radius: {
-      value: 1.8,
+      value: orbRadius,
       min: 0,
       max: 5,
       onChange: (value: number) => {
