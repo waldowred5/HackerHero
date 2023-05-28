@@ -129,45 +129,6 @@ export default create<NetworkState>((set, get) => {
           }),
         };
       });
-
-      // Highlight vertex and edges
-      // set((state) => {
-      //   const vertices = state.vertices.map((vertex) => {
-      //     if (vertex.uuid === hackBotVertex.uuid) {
-      //       return {
-      //         ...vertex,
-      //         highlight: true,
-      //       };
-      //     }
-      //
-      //     return vertex;
-      //   });
-      //
-      //   const adjacencyMap = Object.entries(state.adjacencyMap).reduce(
-      //     (acc, [uuid, { edges }]) => {
-      //       return {
-      //         ...acc,
-      //         [uuid]: {
-      //           edges: edges.map((edge) => {
-      //             if (edge.uuid === hackBotVertex.uuid) {
-      //               return {
-      //                 ...edge,
-      //                 highlight: true,
-      //               };
-      //             }
-      //
-      //             return edge;
-      //           }),
-      //         },
-      //       };
-      //     }, {}
-      //   );
-      //
-      //   return {
-      //     adjacencyMap,
-      //     vertices,
-      //   };
-      // });
     },
 
     removeHackBot: (uuid: string) => {
@@ -360,6 +321,7 @@ export default create<NetworkState>((set, get) => {
             vector: new THREE.Vector3(x, y, z),
             uuid: uuidv4(),
             owner: PLAYER.NEUTRAL,
+            contestProgress: 0,
           };
         }
       );

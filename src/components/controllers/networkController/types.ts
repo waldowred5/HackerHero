@@ -81,6 +81,7 @@ export type Vertex = {
   uuid: string,
   hackBot?: HackBot,
   owner: keyof typeof PLAYER,
+  contestProgress: number,
 }
 
 export interface NetworkState {
