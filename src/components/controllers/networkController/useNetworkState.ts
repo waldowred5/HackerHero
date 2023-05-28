@@ -1,7 +1,16 @@
 import { create } from 'zustand';
 import * as THREE from 'three';
 import { v4 as uuidv4 } from 'uuid';
-import { HACK_BOT_CLASS, HackBot, HackBotProps, MATCH_PHASE, NetworkState, PLAYER, RESOURCE, Vertex } from './types';
+import {
+  HACK_BOT_CLASS,
+  HackBot,
+  HackBotProps,
+  MATCH_PHASE,
+  NetworkState,
+  PLAYER,
+  RESOURCE,
+  Vertex
+} from './types';
 
 export default create<NetworkState>((set, get) => {
   return {
@@ -9,26 +18,27 @@ export default create<NetworkState>((set, get) => {
 
     // General
     radius: 2,
-    vertexNumber: 28,
+    vertexNumber: 14,
     vertexPlacementChaosFactor: 350,
 
     // Edges (NETCONs)
     adjacencyMap: {},
-    maxEdgeLengthPercentage: 0.95,
+    edgeNeighbours: {},
+    maxEdgeLengthPercentage: 1.0,
 
     // Vertices (HAKVEKs)
     vertices: [],
 
     // Orb
     orbOpacity: 0.96,
-    orbRadius: 1.8,
+    orbRadius: 1.6,
 
     // HackBots
     hackBots: [],
 
     // Resources
     resources: {
-      [RESOURCE.HACKING_POWER]: 375,
+      [RESOURCE.HACKING_POWER]: 275,
       [RESOURCE.COMPUTE_POWER]: 0,
     },
 
@@ -84,6 +94,16 @@ export default create<NetworkState>((set, get) => {
             ...state.hackBots,
             newHackBot,
           ],
+        };
+      });
+
+      // Update resource generation
+      set((state) => {
+        return {
+          resourcesPerSecond: {
+            ...state.resourcesPerSecond,
+            [RESOURCE.HACKING_POWER]: state.resourcesPerSecond[RESOURCE.HACKING_POWER] + 2,
+          },
         };
       });
 
@@ -147,6 +167,10 @@ export default create<NetworkState>((set, get) => {
       set((state) => {
         return {
           hackBots: state.hackBots.filter((hackBot) => hackBot.uuid !== uuid),
+          resourcesPerSecond: {
+            ...state.resourcesPerSecond,
+            [RESOURCE.HACKING_POWER]: state.resourcesPerSecond[RESOURCE.HACKING_POWER] - 2,
+          },
         };
       });
     },
@@ -183,6 +207,14 @@ export default create<NetworkState>((set, get) => {
         };
       });
 
+      set((state) => {
+        const edgeNeighbours = state.generateEdgeNeighbours(state.adjacencyMap);
+
+        return {
+          edgeNeighbours,
+        };
+      });
+
       set(() => {
         return {
           hackBots: [],
@@ -198,13 +230,15 @@ export default create<NetworkState>((set, get) => {
       }
     ) => {
       console.log('Generating Adjacency Map...');
+      // For storing edgeIds to apply the same uuid to both edge directions in the edge pair
+      const edgeIdsMap = {};
+
       return vertices.reduce(
-        (acc, toVector: Vertex, outerIndex, array) => {
+        (acc, fromVector: Vertex, outerIndex, array) => {
           const uuidFrom = array[outerIndex].uuid;
 
-          const edges = array.map((fromVector: Vertex, innerIndex) => {
-            const uuidTo = array[innerIndex].uuid;
-
+          const edges = array.map((toVector: Vertex, innerIndex) => {
+            // if (outerIndex >= innerIndex) {
             if (outerIndex === innerIndex) {
               return;
             }
@@ -215,11 +249,21 @@ export default create<NetworkState>((set, get) => {
               return;
             }
 
+            // Check if an edge uuid has already been generated
+            let edgeId = edgeIdsMap[`${fromVector.uuid}:${toVector.uuid}`];
+
+            // If no edge uuid set create dual paired keys for the next edgeId search
+            if (!edgeId) {
+              edgeId = uuidv4();
+              edgeIdsMap[`${fromVector.uuid}:${toVector.uuid}`] = edgeId;
+              edgeIdsMap[`${toVector.uuid}:${fromVector.uuid}`] = edgeId;
+            }
+
             return {
               distance: fromVector.vector.distanceTo(toVector.vector),
               toVector,
               fromVector,
-              uuid: uuidTo,
+              uuid: edgeId,
               highlight: false,
             };
           }).filter((edge) => !!edge);
@@ -231,6 +275,35 @@ export default create<NetworkState>((set, get) => {
             },
           };
         }, {});
+    },
+
+    generateEdgeNeighbours: (adjacencyMap) => {
+      console.log('Generating Edge Neighbours...');
+
+      return Object.keys(adjacencyMap).reduce(
+        (vertexAcc, vertex) => {
+          const edges = adjacencyMap[vertex].edges.reduce((edgeAcc, edge) => {
+            return {
+              ...edgeAcc,
+              [edge.uuid]: {
+                fromVector: {
+                  vector: edge.fromVector.vector,
+                  uuid: edge.fromVector.uuid,
+                },
+                toVector: {
+                  vector: edge.toVector.vector,
+                  uuid: edge.toVector.uuid,
+                },
+              },
+            };
+          }, {});
+
+          return {
+            ...vertexAcc,
+            ...edges,
+          };
+        }, {}
+      );
     },
 
     updateMaxEdgeLengthPercentage: (newMaxEdgeLengthPercentage: number) => {
@@ -354,6 +427,10 @@ export default create<NetworkState>((set, get) => {
           return {
             matchPhase: MATCH_PHASE.POST_MATCH,
             matchEndTime: Date.now(),
+            resourcesPerSecond: {
+              [RESOURCE.HACKING_POWER]: 0,
+              [RESOURCE.COMPUTE_POWER]: 0,
+            },
           };
         }
 
@@ -366,6 +443,14 @@ export default create<NetworkState>((set, get) => {
         if (state.matchPhase === MATCH_PHASE.ACTIVE_MATCH || state.matchPhase === MATCH_PHASE.POST_MATCH) {
           return {
             matchPhase: MATCH_PHASE.PRE_MATCH,
+            resources: {
+              [RESOURCE.HACKING_POWER]: 275,
+              [RESOURCE.COMPUTE_POWER]: 0,
+            },
+            resourcesPerSecond: {
+              [RESOURCE.HACKING_POWER]: 0,
+              [RESOURCE.COMPUTE_POWER]: 0,
+            },
           };
         }
 

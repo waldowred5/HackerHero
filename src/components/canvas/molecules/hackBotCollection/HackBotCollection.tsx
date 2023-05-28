@@ -4,7 +4,6 @@ import { HackBotModel } from '../../atoms/hackBotModel/HackBotModel';
 
 interface Props {
   hackBots: HackBot[];
-  vertices: Vertex[];
 }
 
 export const HackBotCollection = ({ hackBots }: Props) => {

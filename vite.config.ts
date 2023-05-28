@@ -5,10 +5,11 @@ import react from '@vitejs/plugin-react';
 import electron from 'vite-plugin-electron';
 import renderer from 'vite-plugin-electron-renderer';
 import pkg from './package.json';
-// import glsl from 'vite-plugin-glsl';
 
 // https://vitejs.dev/config/
-export default defineConfig(({ command }) => {
+export default defineConfig(async ({ command }) => {
+  const glsl = (await import('vite-plugin-glsl')).default;
+
   rmSync('dist-electron', { recursive: true, force: true });
 
   const isServe = command === 'serve';
@@ -23,7 +24,7 @@ export default defineConfig(({ command }) => {
     },
     plugins: [
       react(),
-      // glsl(),
+      glsl(),
       electron([
         {
           // Main-Process entry file of the Electron App.
