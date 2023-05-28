@@ -1,12 +1,13 @@
 import React from 'react';
-import { EdgeNeighbours } from '../../../controllers/networkController/types';
+import { EdgeNeighbours, PLAYER_COLOR } from '../../../controllers/networkController/types';
 import { Edge } from '../../atoms/edge/Edge';
 
 interface Props {
   edgeNeighbours: EdgeNeighbours;
+  playerColors: PLAYER_COLOR;
 }
 
-export const EdgeCollection = ({ edgeNeighbours }: Props) => {
+export const EdgeCollection = ({ edgeNeighbours, playerColors }: Props) => {
   return (
     <group>
       {
@@ -21,6 +22,7 @@ export const EdgeCollection = ({ edgeNeighbours }: Props) => {
               key={`Edge: [${x1}, ${y1}, ${z1}], [${x2}, ${y2}, ${z2}]`}
               fromVertex={fromVertex}
               toVertex={toVertex}
+              playerColors={playerColors}
             />
           );
         })

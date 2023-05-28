@@ -20,6 +20,11 @@ export default create<NetworkState>((set, get) => {
     radius: 2,
     vertexNumber: 14,
     vertexPlacementChaosFactor: 350,
+    playerColors: {
+      [PLAYER.NEUTRAL]: 'lightgrey',
+      [PLAYER.PLAYER_1]: 'blue',
+      [PLAYER.PLAYER_2]: 'red',
+    },
 
     // Edges (NETCONs)
     adjacencyMap: {},
@@ -103,6 +108,67 @@ export default create<NetworkState>((set, get) => {
         };
       });
 
+      // TODO: Do we need to manage this in 2 places?
+      // Look at managing HackBot list directly from vertices
+      // Add new HackBot to Vertex
+      set((state) => {
+        const vertices = state.vertices.map((vertex) => {
+          if (vertex.uuid === hackBotVertex.uuid) {
+            return {
+              ...vertex,
+              hackBot: newHackBot,
+              owner: PLAYER.PLAYER_1,
+            };
+          }
+
+          return vertex;
+        });
+
+        return {
+          vertices,
+        };
+      });
+
+      // Update Vertex owner in EdgeNeighbours
+      // TODO: Fix bug where contested edge only shows contest progress from one direction
+      // This kind of store update should never be required
+      // The edgeNeighbours map should only have a reference to the vertex that has been updated
+      set((state) => {
+        const edges = state.adjacencyMap[hackBotVertex.uuid].edges;
+        // const toVertexOwner = state.hackBots.find((hackBot) => hackBot.vertex.uuid === hackBotVertex.uuid);
+
+        const modifiedEdgeNeighbours = edges.reduce((acc, edge) => {
+          return {
+            ...acc,
+            [edge.uuid]: {
+              toVertex: edge.toVertex,
+              // toVertex: {
+              //   ...edge.toVertex,
+              //   owner: toVertexOwner
+              // },
+              fromVertex: {
+                ...edge.fromVertex,
+                owner: PLAYER.PLAYER_1,
+              }
+            }
+          };
+
+        }, {});
+
+        console.log(state.edgeNeighbours, modifiedEdgeNeighbours);
+
+        const edgeNeighbours = {
+          ...state.edgeNeighbours,
+          ...modifiedEdgeNeighbours,
+        };
+
+        console.log('The final edgeNeighbours!', edgeNeighbours);
+
+        return {
+          edgeNeighbours,
+        };
+      });
+
       // Update resource generation
       set((state) => {
         return {
@@ -110,23 +176,6 @@ export default create<NetworkState>((set, get) => {
             ...state.resourcesPerSecond,
             [RESOURCE.HACKING_POWER]: state.resourcesPerSecond[RESOURCE.HACKING_POWER] + 2,
           },
-        };
-      });
-
-      // Add new HackBot to Vertex
-      set((state) => {
-        return {
-          vertices: state.vertices.map((vertex) => {
-            if (vertex.uuid === hackBotVertex.uuid) {
-              return {
-                ...vertex,
-                hackBot: newHackBot,
-                owner: PLAYER.PLAYER_1,
-              };
-            }
-
-            return vertex;
-          }),
         };
       });
     },
@@ -256,10 +305,14 @@ export default create<NetworkState>((set, get) => {
                 fromVertex: {
                   vector: edge.fromVertex.vector,
                   uuid: edge.fromVertex.uuid,
+                  owner: PLAYER.NEUTRAL,
+                  contestProgress: 0,
                 },
                 toVertex: {
                   vector: edge.toVertex.vector,
                   uuid: edge.toVertex.uuid,
+                  owner: PLAYER.NEUTRAL,
+                  contestProgress: 0,
                 },
               },
             };
@@ -321,7 +374,6 @@ export default create<NetworkState>((set, get) => {
             vector: new THREE.Vector3(x, y, z),
             uuid: uuidv4(),
             owner: PLAYER.NEUTRAL,
-            contestProgress: 0,
           };
         }
       );

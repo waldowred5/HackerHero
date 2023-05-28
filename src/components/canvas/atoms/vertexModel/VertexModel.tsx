@@ -54,7 +54,7 @@ export const VertexModel = ({ createHackBot, removeHackBot, vertex, uuid }: Prop
         <>
           <mesh
             ref={ref}
-            position={vertex.vector}a
+            position={vertex.vector}
             onClick={() => leftClickHandler()}
             onContextMenu={() => rightClickHandler()}
             onPointerEnter={(event) => changeVertexColor(event, owner === PLAYER.PLAYER_1 ? 'cyan' : 'white')}

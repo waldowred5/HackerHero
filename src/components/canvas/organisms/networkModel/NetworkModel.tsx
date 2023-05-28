@@ -4,7 +4,7 @@ import {
   AdjacencyMap,
   EdgeNeighbours,
   HackBot,
-  HackBotProps,
+  HackBotProps, PLAYER_COLOR,
   Vertex
 } from '../../../controllers/networkController/types';
 import { EdgeCollection } from '../../molecules/edgeCollection/EdgeCollection';
@@ -13,6 +13,7 @@ import { HackBotCollection } from '../../molecules/hackBotCollection/HackBotColl
 
 interface Props {
   edgeNeighbours: EdgeNeighbours,
+  playerColors: PLAYER_COLOR,
   hackBots: HackBot[],
   createHackBot: ({ vertex }: HackBotProps) => void,
   removeHackBot: (uuid: string) => void,
@@ -26,6 +27,7 @@ interface Props {
 export const NetworkModel = (
   {
     edgeNeighbours,
+    playerColors,
     hackBots,
     createHackBot,
     removeHackBot,
@@ -52,6 +54,7 @@ export const NetworkModel = (
 
       <EdgeCollection
         edgeNeighbours={edgeNeighbours}
+        playerColors={playerColors}
       />
 
       <HackBotCollection

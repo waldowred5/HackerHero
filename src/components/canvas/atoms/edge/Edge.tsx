@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import * as THREE from 'three';
-import { Vertex } from '../../../controllers/networkController/types';
+import { PLAYER, PLAYER_COLOR, Vertex } from '../../../controllers/networkController/types';
 import vertexShader from '../../../../assets/shaders/cylinders/vertex.glsl';
 import fragmentShader from '../../../../assets/shaders/cylinders/fragment.glsl';
 import { useControls } from 'leva';
@@ -8,9 +8,10 @@ import { useControls } from 'leva';
 interface Props {
   fromVertex: Vertex;
   toVertex: Vertex;
+  playerColors: PLAYER_COLOR;
 }
 
-export const Edge = ({ fromVertex, toVertex }: Props) => {
+export const Edge = ({ fromVertex, toVertex, playerColors }: Props) => {
   const [fromVertexOwnershipPercentage, setFromVertexOwnershipPercentage] = useState(0.0);
   const [toVertexOwnershipPercentage, setVertexToOwnershipPercentage] = useState(0.0);
 
@@ -53,13 +54,20 @@ export const Edge = ({ fromVertex, toVertex }: Props) => {
   cylinderGeom.translate(0, distance / 2, 0);
   cylinderGeom.rotateX(Math.PI / 2);
 
+  const getColor = (player: PLAYER) => {
+    return new THREE.Color(playerColors[player]);
+  };
+
   const cylinderMaterial = new THREE.ShaderMaterial({
     vertexShader,
     fragmentShader,
     uniforms: {
-      uCylinderColorBase: { value: new THREE.Color('lightgrey') },
-      uCylinderColorFromVertex: { value: new THREE.Color('blue') },
-      uCylinderColorToVertex: { value: new THREE.Color('red') },
+      uCylinderColorBase: { value: getColor(PLAYER.NEUTRAL) },
+      uCylinderColorFromVertex: { value: getColor(PLAYER[fromVertex.owner]) },
+      uCylinderColorToVertex: { value: getColor(PLAYER[toVertex.owner]) },
+      // uCylinderColorBase: { value: new THREE.Color('lightgrey') },
+      // uCylinderColorFromVertex: { value: new THREE.Color('blue') },
+      // uCylinderColorToVertex: { value: new THREE.Color('red') },
       uCylinderDistance: { value: distance },
       uFromVertexOwnershipPercentage: { value: fromVertexOwnershipPercentage },
       uToVertexOwnershipPercentage: { value: toVertexOwnershipPercentage },

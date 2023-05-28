@@ -5,7 +5,6 @@ export type AdjacencyEdge = {
   fromVertex: Vertex,
   toVertex: Vertex,
   uuid: string,
-  highlight: boolean,
 }
 
 export type AdjacencyMap = {
@@ -41,6 +40,10 @@ export enum PLAYER {
   NEUTRAL = 'NEUTRAL',
   PLAYER_1 = 'PLAYER_1',
   PLAYER_2 = 'PLAYER_2',
+}
+
+export type PLAYER_COLOR = {
+  [key: string]: string,
 }
 
 // TODO: Come up with more creative names for these
@@ -81,7 +84,6 @@ export type Vertex = {
   uuid: string,
   hackBot?: HackBot,
   owner: keyof typeof PLAYER,
-  contestProgress: number,
 }
 
 export interface NetworkState {
@@ -89,6 +91,7 @@ export interface NetworkState {
   radius: number,
   vertexNumber: number,
   vertexPlacementChaosFactor: number,
+  playerColors: PLAYER_COLOR,
 
   // Edges (NETCONs)
   adjacencyMap: AdjacencyMap,
