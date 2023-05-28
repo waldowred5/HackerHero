@@ -38,7 +38,7 @@ export default create<NetworkState>((set, get) => {
 
     // Resources
     resources: {
-      [RESOURCE.HACKING_POWER]: 375,
+      [RESOURCE.HACKING_POWER]: 275,
       [RESOURCE.COMPUTE_POWER]: 0,
     },
 
@@ -94,6 +94,16 @@ export default create<NetworkState>((set, get) => {
             ...state.hackBots,
             newHackBot,
           ],
+        };
+      });
+
+      // Update resource generation
+      set((state) => {
+        return {
+          resourcesPerSecond: {
+            ...state.resourcesPerSecond,
+            [RESOURCE.HACKING_POWER]: state.resourcesPerSecond[RESOURCE.HACKING_POWER] + 2,
+          },
         };
       });
 
@@ -157,6 +167,10 @@ export default create<NetworkState>((set, get) => {
       set((state) => {
         return {
           hackBots: state.hackBots.filter((hackBot) => hackBot.uuid !== uuid),
+          resourcesPerSecond: {
+            ...state.resourcesPerSecond,
+            [RESOURCE.HACKING_POWER]: state.resourcesPerSecond[RESOURCE.HACKING_POWER] - 2,
+          },
         };
       });
     },
@@ -413,6 +427,10 @@ export default create<NetworkState>((set, get) => {
           return {
             matchPhase: MATCH_PHASE.POST_MATCH,
             matchEndTime: Date.now(),
+            resourcesPerSecond: {
+              [RESOURCE.HACKING_POWER]: 0,
+              [RESOURCE.COMPUTE_POWER]: 0,
+            },
           };
         }
 
@@ -425,6 +443,14 @@ export default create<NetworkState>((set, get) => {
         if (state.matchPhase === MATCH_PHASE.ACTIVE_MATCH || state.matchPhase === MATCH_PHASE.POST_MATCH) {
           return {
             matchPhase: MATCH_PHASE.PRE_MATCH,
+            resources: {
+              [RESOURCE.HACKING_POWER]: 275,
+              [RESOURCE.COMPUTE_POWER]: 0,
+            },
+            resourcesPerSecond: {
+              [RESOURCE.HACKING_POWER]: 0,
+              [RESOURCE.COMPUTE_POWER]: 0,
+            },
           };
         }
 

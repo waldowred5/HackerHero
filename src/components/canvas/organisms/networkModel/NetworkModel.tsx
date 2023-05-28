@@ -1,7 +1,8 @@
 import React from 'react';
 import { NetworkOrb } from '../../atoms/networkOrb/NetworkOrb';
 import {
-  AdjacencyMap, EdgeNeighbours,
+  AdjacencyMap,
+  EdgeNeighbours,
   HackBot,
   HackBotProps,
   Vertex
@@ -11,15 +12,12 @@ import { VertexCollection } from '../../molecules/vertexCollection/VertexCollect
 import { HackBotCollection } from '../../molecules/hackBotCollection/HackBotCollection';
 
 interface Props {
-  adjacencyMap: AdjacencyMap,
   edgeNeighbours: EdgeNeighbours,
   hackBots: HackBot[],
   createHackBot: ({ vertex }: HackBotProps) => void,
   removeHackBot: (uuid: string) => void,
-  maxEdgeLengthPercentage: number,
   orbOpacity: number,
   orbRadius: number,
-  radius: number,
   updateOrbOpacity: (value: number) => void,
   updateOrbRadius: (value: number) => void,
   vertices: Vertex[],
@@ -27,17 +25,14 @@ interface Props {
 
 export const NetworkModel = (
   {
-    adjacencyMap,
     edgeNeighbours,
     hackBots,
     createHackBot,
     removeHackBot,
-    maxEdgeLengthPercentage,
     orbOpacity,
     updateOrbOpacity,
     orbRadius,
     updateOrbRadius,
-    radius,
     vertices,
   }: Props) => {
   return (
@@ -56,16 +51,11 @@ export const NetworkModel = (
       />
 
       <EdgeCollection
-        adjacencyMap={adjacencyMap}
         edgeNeighbours={edgeNeighbours}
-        maxEdgeLengthPercentage={maxEdgeLengthPercentage}
-        radius={radius}
-        vertices={vertices}
       />
 
       <HackBotCollection
         hackBots={hackBots}
-        vertices={vertices}
       />
     </>
   );

@@ -107,9 +107,11 @@ export interface NetworkState {
   // Resources
   resources: {
     [key: string]: number,
+    [key: string]: number,
   }
 
   resourcesPerSecond: {
+    [key: string]: number,
     [key: string]: number,
   }
 

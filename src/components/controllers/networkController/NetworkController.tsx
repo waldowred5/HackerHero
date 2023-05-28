@@ -5,8 +5,8 @@ import { button, folder, useControls } from 'leva';
 import { useFrame } from '@react-three/fiber';
 import { OrbitControls, useKeyboardControls } from '@react-three/drei';
 import { Physics, RapierRigidBody, RigidBody } from '@react-three/rapier';
-import { RESOURCE } from './types';
-import animationInterval from '@/utils/animation-interval';
+import { MATCH_PHASE, RESOURCE } from './types';
+import animationInterval from '../../../utils/animation-interval';
 
 export const NetworkController = () => {
   const body = useRef<RapierRigidBody>(null);
@@ -42,20 +42,23 @@ export const NetworkController = () => {
 
     // Resources
     resourcesPerSecond,
-    setResource,
     updateResource,
 
     // Time
     startMatch,
     endMatch,
     resetMatch,
-
   } = useNetworkState();
 
   // Init Vertices
   useEffect(() => {
     generateNetwork();
     startMatch();
+   }, [vertexNumber, vertexPlacementChaosFactor, maxEdgeLengthPercentage]);
+
+  useEffect(() => {
+    // TODO: Does putting this in its own useEffect create
+    //  a new animationInterval whenever resourcesPerSecond is updated?
     const abortController = new AbortController();
     animationInterval(
       1000,
@@ -64,11 +67,11 @@ export const NetworkController = () => {
         .values(RESOURCE)
         .forEach((resource) =>
           resourcesPerSecond[resource]
-          && updateResource(resource, resourcesPerSecond[resource])
+          && updateResource(RESOURCE[resource], resourcesPerSecond[resource])
         )
     );
     return () => abortController.abort();
-   }, [vertexNumber, vertexPlacementChaosFactor, maxEdgeLengthPercentage]);
+  }, [resourcesPerSecond]);
 
   // Debug
   useControls('Network Model', {
@@ -78,7 +81,6 @@ export const NetworkController = () => {
       }),
       newMatch: button(() => {
         resetMatch();
-        setResource(RESOURCE.HACKING_POWER, 350);
         generateNetwork();
         startMatch();
       }),
