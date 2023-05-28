@@ -193,13 +193,13 @@ export default create<NetworkState>((set, get) => {
         };
       });
 
-      // set((state) => {
-      //   const edgeNeighbours = state.generateEdgeNeighbours(state.adjacencyMap);
-      //
-      //   return {
-      //     edgeNeighbours,
-      //   };
-      // });
+      set((state) => {
+        const edgeNeighbours = state.generateEdgeNeighbours(state.adjacencyMap);
+
+        return {
+          edgeNeighbours,
+        };
+      });
 
       set(() => {
         return {
@@ -263,49 +263,34 @@ export default create<NetworkState>((set, get) => {
         }, {});
     },
 
-    // generateEdgeNeighbours: (adjacencyMap) => {
-    //   console.log('Generating Edge Neighbours...');
-    //
-    //   const edgeNeighboursEg = {
-    //     ['uuid']: {
-    //       fromVector: { vector: 'd', uuid: 'd' },
-    //       toVector: { vector: 's', uuid: 'lmao' },
-    //     }
-    //   };
-    //
-    //   const visited: EdgeNeighbours[] = [];
-    //
-    //   const edgeNeighbours = Object.
+    generateEdgeNeighbours: (adjacencyMap) => {
+      console.log('Generating Edge Neighbours...');
 
-    /*
-    const edgeNeighbours = Object.keys(adjacencyMap).map((vertex) => {
-      return adjacencyMap[vertex].edges.reduce(
-        (acc, [uuid, { edges }]) => {
+      return Object.keys(adjacencyMap).reduce(
+        (vertexAcc, vertex) => {
+          const edges = adjacencyMap[vertex].edges.reduce((edgeAcc, edge) => {
+            return {
+              ...edgeAcc,
+              [edge.uuid]: {
+                fromVector: {
+                  vector: edge.fromVector.vector,
+                  uuid: edge.fromVector.uuid,
+                },
+                toVector: {
+                  vector: edge.toVector.vector,
+                  uuid: edge.toVector.uuid,
+                },
+              },
+            };
+          }, {});
+
           return {
-            ...acc,
-            [uuid]: edges.reduce(
-              (acc, { fromVector, toVector, uuid: edgeId }) => {
-                return {
-                  ...acc,
-                  [edgeId]: {
-                    fromVector: {
-                      vector: fromVector.vector,
-                      uuid: fromVector.uuid,
-                    },
-                    toVector: {
-                      vector: toVector.vector,
-                      uuid: toVector.uuid,
-                    },
-                  },
-                };
-              }, {}),
+            ...vertexAcc,
+            ...edges,
           };
-        });
-    });
-    */
-
-    // return edgeNeighbours;
-    // },
+        }, {}
+      );
+    },
 
     updateMaxEdgeLengthPercentage: (newMaxEdgeLengthPercentage: number) => {
       set(() => {

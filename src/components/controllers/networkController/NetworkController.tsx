@@ -70,11 +70,6 @@ export const NetworkController = () => {
     return () => abortController.abort();
    }, [vertexNumber, vertexPlacementChaosFactor, maxEdgeLengthPercentage]);
 
-  useEffect(() => {
-    console.log('Adjacency Map: ', adjacencyMap);
-    console.log('Edge Neighbours: ', edgeNeighbours);
-  }, [adjacencyMap, edgeNeighbours]);
-
   // Debug
   useControls('Network Model', {
     match: folder({
@@ -86,8 +81,6 @@ export const NetworkController = () => {
         setResource(RESOURCE.HACKING_POWER, 350);
         generateNetwork();
         startMatch();
-        console.log('Adjacency Map: ', adjacencyMap);
-        console.log('Edge Neighbours: ', edgeNeighbours);
       }),
     }),
     maxEdgeLengthPercentage: {
