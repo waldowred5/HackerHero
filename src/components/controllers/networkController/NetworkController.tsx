@@ -54,7 +54,11 @@ export const NetworkController = () => {
   useEffect(() => {
     generateNetwork();
     startMatch();
-   }, [vertexNumber, vertexPlacementChaosFactor, maxEdgeLengthPercentage]);
+  }, [vertexNumber, vertexPlacementChaosFactor, maxEdgeLengthPercentage]);
+
+  useEffect(() => {
+    console.log({ edgeNeighbours });
+  }, [edgeNeighbours]);
 
   useEffect(() => {
     // TODO: Does putting this in its own useEffect create

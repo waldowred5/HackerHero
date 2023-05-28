@@ -2,8 +2,8 @@ import * as THREE from 'three';
 
 export type AdjacencyEdge = {
   distance: number,
-  fromVector: Vertex,
-  toVector: Vertex,
+  fromVertex: Vertex,
+  toVertex: Vertex,
   uuid: string,
   highlight: boolean,
 }
@@ -16,8 +16,8 @@ export type AdjacencyMap = {
 
 export type EdgeNeighbours = {
   [key: string]: {
-    fromVector: Vertex,
-    toVector: Vertex,
+    fromVertex: Vertex,
+    toVertex: Vertex,
   },
 }
 
@@ -80,7 +80,7 @@ export type Vertex = {
   vector: THREE.Vector3,
   uuid: string,
   hackBot?: HackBot,
-  highlight: boolean,
+  owner: keyof typeof PLAYER,
 }
 
 export interface NetworkState {

@@ -6,28 +6,31 @@ import fragmentShader from '../../../../assets/shaders/cylinders/fragment.glsl';
 import { useControls } from 'leva';
 
 interface Props {
-  fromVector: Vertex;
-  toVector: Vertex;
+  fromVertex: Vertex;
+  toVertex: Vertex;
 }
 
-export const Edge = ({ fromVector, toVector }: Props) => {
-  const [ownershipPercentage, setOwnershipPercentage] = useState(0.0);
-  const [directionToggle, setDirectionToggle] = useState(true);
+export const Edge = ({ fromVertex, toVertex }: Props) => {
+  const [fromVertexOwnershipPercentage, setFromVertexOwnershipPercentage] = useState(0.0);
+  const [toVertexOwnershipPercentage, setVertexToOwnershipPercentage] = useState(0.0);
 
   useControls('Edges', {
-    ownershipPercentage: {
+    fromVertexOwnershipPercentage: {
       value: 0.0,
       min: 0.0,
       max: 1.0,
       step: 0.01,
       onChange: (value: number) => {
-        setOwnershipPercentage(value);
+        setFromVertexOwnershipPercentage(value);
       }
     },
-    directionToggle: {
-      value: directionToggle,
-      onChange: (value: boolean) => {
-        setDirectionToggle(value);
+    toVertexOwnershipPercentage: {
+      value: 0.0,
+      min: 0.0,
+      max: 1.0,
+      step: 0.01,
+      onChange: (value: number) => {
+        setVertexToOwnershipPercentage(value);
       }
     },
   });
@@ -38,7 +41,7 @@ export const Edge = ({ fromVector, toVector }: Props) => {
     length: 32,
   };
 
-  const distance = fromVector.vector.distanceTo(toVector.vector);
+  const distance = fromVertex.vector.distanceTo(toVertex.vector);
   const cylinderGeom = new THREE.CylinderGeometry(
     cylinderRadius,
     cylinderRadius,
@@ -55,12 +58,11 @@ export const Edge = ({ fromVector, toVector }: Props) => {
     fragmentShader,
     uniforms: {
       uCylinderColorBase: { value: new THREE.Color('lightgrey') },
-      uCylinderColorPlayerOne: { value: new THREE.Color('blue') },
-      uCylinderColorPlayerTwo: { value: new THREE.Color('red') },
+      uCylinderColorFromVertex: { value: new THREE.Color('blue') },
+      uCylinderColorToVertex: { value: new THREE.Color('red') },
       uCylinderDistance: { value: distance },
-      uOwnershipPercentage: { value: ownershipPercentage },
-      // TODO: Figure out how to dynamically set directionToggle based on the direction of the edge and the vertex owner
-      uDirectionToggle: { value: directionToggle },
+      uFromVertexOwnershipPercentage: { value: fromVertexOwnershipPercentage },
+      uToVertexOwnershipPercentage: { value: toVertexOwnershipPercentage },
     }
   });
 
@@ -69,8 +71,8 @@ export const Edge = ({ fromVector, toVector }: Props) => {
     cylinderMaterial,
   );
 
-  cylinder.position.copy(toVector.vector);
-  cylinder.lookAt(fromVector.vector);
+  cylinder.position.copy(toVertex.vector);
+  cylinder.lookAt(fromVertex.vector);
 
   return (
     <>
