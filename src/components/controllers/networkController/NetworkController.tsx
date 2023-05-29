@@ -22,7 +22,6 @@ export const NetworkController = () => {
     playerColors,
 
     // Edges
-    adjacencyMap,
     edgeNeighbours,
     maxEdgeLengthPercentage,
     updateMaxEdgeLengthPercentage,

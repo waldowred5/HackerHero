@@ -1,7 +1,6 @@
 import React from 'react';
 import { NetworkOrb } from '../../atoms/networkOrb/NetworkOrb';
 import {
-  AdjacencyMap,
   EdgeNeighbours,
   HackBot,
   HackBotProps, PLAYER_COLOR,

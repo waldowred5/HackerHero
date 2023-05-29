@@ -1,6 +1,7 @@
 import React, { useRef } from 'react';
-import { Group } from 'three';
+import { Group, WebGLCubeRenderTarget } from 'three';
 import { useControls } from 'leva';
+import { useThree } from '@react-three/fiber';
 
 interface Props {
   orbOpacity: number,
@@ -11,6 +12,14 @@ interface Props {
 
 export const NetworkOrb = ({ orbOpacity, updateOrbRadius, orbRadius, updateOrbOpacity }: Props) => {
   const ref = useRef<Group | null>(null);
+  // const { scene, gl } = useThree();
+  // const cubeRenderTarget = new WebGLCubeRenderTarget(256, {
+  //   format: THREE.RGBFormat,
+  //   generateMipmaps: true,
+  //   minFilter: LinearMipmapLinearFilter,
+  // });
+  // const cubeCamera = new CubeCamera(1, 1000, cubeRenderTarget);
+  // cubeCamera.position.set(0, 100, 0);
 
   // Debug
   useControls('NetworkOrb', {
