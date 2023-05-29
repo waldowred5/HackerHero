@@ -4,7 +4,7 @@ import { Group, Mesh } from 'three';
 import { Text } from '@react-three/drei';
 import { ThreeEvent, useFrame } from '@react-three/fiber';
 import {
-  HackBotProps,
+  HackBotProps, PLAYER,
   Vertex
 } from '../../../controllers/networkController/types';
 
@@ -18,11 +18,12 @@ interface Props {
 export const VertexModel = ({ createHackBot, removeHackBot, vertex, uuid }: Props) => {
   const ref = useRef<Mesh | null>(null);
   const textRef = useRef<Group | null>(null);
-  const { highlight } = vertex;
+  const { owner } = vertex;
 
   useFrame((state) => {
     const { camera } = state;
 
+    // @ts-ignore
     textRef.current?.lookAt(camera.position);
   });
 
@@ -56,13 +57,12 @@ export const VertexModel = ({ createHackBot, removeHackBot, vertex, uuid }: Prop
             position={vertex.vector}
             onClick={() => leftClickHandler()}
             onContextMenu={() => rightClickHandler()}
-            onPointerEnter={(event) => changeVertexColor(event, highlight ? 'cyan' : 'white')}
-            onPointerLeave={(event) => changeVertexColor(event, highlight ? 'blue' : 'grey')}
+            onPointerEnter={(event) => changeVertexColor(event, owner === PLAYER.PLAYER_1 ? 'cyan' : 'white')}
+            onPointerLeave={(event) => changeVertexColor(event, owner === PLAYER.PLAYER_1 ? 'blue' : 'grey')}
           >
             <sphereGeometry args={[0.12, 32, 32]}/>
             <meshBasicMaterial
-              color={highlight ? 'blue' : 'grey'}
-              side={THREE.DoubleSide}
+              color={owner === PLAYER.PLAYER_1 ? 'blue' : 'grey'}
             />
           </mesh>
           <group

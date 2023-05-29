@@ -5,7 +5,7 @@ import { button, folder, useControls } from 'leva';
 import { useFrame } from '@react-three/fiber';
 import { OrbitControls, useKeyboardControls } from '@react-three/drei';
 import { Physics, RapierRigidBody, RigidBody } from '@react-three/rapier';
-import { MATCH_PHASE, RESOURCE } from './types';
+import { RESOURCE } from './types';
 import animationInterval from '../../../utils/animation-interval';
 
 export const NetworkController = () => {
@@ -19,6 +19,7 @@ export const NetworkController = () => {
     updateVertexNumber,
     vertexPlacementChaosFactor,
     updateVertexPlacementChaosFactor,
+    playerColors,
 
     // Edges
     adjacencyMap,
@@ -54,7 +55,11 @@ export const NetworkController = () => {
   useEffect(() => {
     generateNetwork();
     startMatch();
-   }, [vertexNumber, vertexPlacementChaosFactor, maxEdgeLengthPercentage]);
+  }, [vertexNumber, vertexPlacementChaosFactor, maxEdgeLengthPercentage]);
+
+  useEffect(() => {
+    console.log({ edgeNeighbours });
+  }, [edgeNeighbours]);
 
   useEffect(() => {
     // TODO: Does putting this in its own useEffect create
@@ -152,8 +157,8 @@ export const NetworkController = () => {
           angularDamping={8}
         >
           <NetworkModel
-            adjacencyMap={adjacencyMap}
             edgeNeighbours={edgeNeighbours}
+            playerColors={playerColors}
             hackBots={hackBots}
             createHackBot={createHackBot}
             removeHackBot={removeHackBot}

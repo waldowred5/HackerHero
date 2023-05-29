@@ -20,6 +20,11 @@ export default create<NetworkState>((set, get) => {
     radius: 2,
     vertexNumber: 14,
     vertexPlacementChaosFactor: 350,
+    playerColors: {
+      [PLAYER.NEUTRAL]: 'lightgrey',
+      [PLAYER.PLAYER_1]: 'blue',
+      [PLAYER.PLAYER_2]: 'red',
+    },
 
     // Edges (NETCONs)
     adjacencyMap: {},
@@ -56,6 +61,11 @@ export default create<NetworkState>((set, get) => {
 
     // HackBot Actions
     createHackBot: ({ vertex: hackBotVertex }: HackBotProps) => {
+      // Check if a HackBot already exists on Vertex
+      if (get().hackBots.find((existing) => existing.vertex.uuid === hackBotVertex.uuid)) {
+        return;
+      }
+
       const newHackBot: HackBot = {
         botClass: HACK_BOT_CLASS.GENERATE_HACKING_POWER,
         resourceCost: 100,
@@ -65,7 +75,7 @@ export default create<NetworkState>((set, get) => {
         vertex: hackBotVertex,
       };
 
-      // Pay resource cost
+      // Check resource cost
       const canAffordNewHackBot = get().resources[newHackBot.resourceRequirement] >= newHackBot.resourceCost;
 
       if (!canAffordNewHackBot) {
@@ -74,6 +84,7 @@ export default create<NetworkState>((set, get) => {
         return;
       }
 
+      // Pay resource cost
       set((state) => {
         if (state.resources[newHackBot.resourceRequirement] < newHackBot.resourceCost) {
           return state;
@@ -97,6 +108,67 @@ export default create<NetworkState>((set, get) => {
         };
       });
 
+      // TODO: Do we need to manage this in 2 places?
+      // Look at managing HackBot list directly from vertices
+      // Add new HackBot to Vertex
+      set((state) => {
+        const vertices = state.vertices.map((vertex) => {
+          if (vertex.uuid === hackBotVertex.uuid) {
+            return {
+              ...vertex,
+              hackBot: newHackBot,
+              owner: PLAYER.PLAYER_1,
+            };
+          }
+
+          return vertex;
+        });
+
+        return {
+          vertices,
+        };
+      });
+
+      // Update Vertex owner in EdgeNeighbours
+      // TODO: Fix bug where contested edge only shows contest progress from one direction
+      // This kind of store update should never be required
+      // The edgeNeighbours map should only have a reference to the vertex that has been updated
+      set((state) => {
+        const edges = state.adjacencyMap[hackBotVertex.uuid].edges;
+        // const toVertexOwner = state.hackBots.find((hackBot) => hackBot.vertex.uuid === hackBotVertex.uuid);
+
+        const modifiedEdgeNeighbours = edges.reduce((acc, edge) => {
+          return {
+            ...acc,
+            [edge.uuid]: {
+              toVertex: edge.toVertex,
+              // toVertex: {
+              //   ...edge.toVertex,
+              //   owner: toVertexOwner
+              // },
+              fromVertex: {
+                ...edge.fromVertex,
+                owner: PLAYER.PLAYER_1,
+              }
+            }
+          };
+
+        }, {});
+
+        console.log(state.edgeNeighbours, modifiedEdgeNeighbours);
+
+        const edgeNeighbours = {
+          ...state.edgeNeighbours,
+          ...modifiedEdgeNeighbours,
+        };
+
+        console.log('The final edgeNeighbours!', edgeNeighbours);
+
+        return {
+          edgeNeighbours,
+        };
+      });
+
       // Update resource generation
       set((state) => {
         return {
@@ -104,61 +176,6 @@ export default create<NetworkState>((set, get) => {
             ...state.resourcesPerSecond,
             [RESOURCE.HACKING_POWER]: state.resourcesPerSecond[RESOURCE.HACKING_POWER] + 2,
           },
-        };
-      });
-
-      // Add new HackBot to Vertex
-      set((state) => {
-        return {
-          vertices: state.vertices.map((vertex) => {
-            if (vertex.uuid === hackBotVertex.uuid) {
-              return {
-                ...vertex,
-                hackBot: newHackBot,
-              };
-            }
-
-            return vertex;
-          }),
-        };
-      });
-
-      // Highlight vertex and edges
-      set((state) => {
-        const vertices = state.vertices.map((vertex) => {
-          if (vertex.uuid === hackBotVertex.uuid) {
-            return {
-              ...vertex,
-              highlight: true,
-            };
-          }
-
-          return vertex;
-        });
-
-        const adjacencyMap = Object.entries(state.adjacencyMap).reduce(
-          (acc, [uuid, { edges }]) => {
-            return {
-              ...acc,
-              [uuid]: {
-                edges: edges.map((edge) => {
-                  if (edge.uuid === hackBotVertex.uuid) {
-                    return {
-                      ...edge,
-                      highlight: true,
-                    };
-                  }
-
-                  return edge;
-                }),
-              },
-            };
-          }, {}
-        );
-
-        return {
-          adjacencyMap,
-          vertices,
         };
       });
     },
@@ -234,37 +251,36 @@ export default create<NetworkState>((set, get) => {
       const edgeIdsMap = {};
 
       return vertices.reduce(
-        (acc, fromVector: Vertex, outerIndex, array) => {
+        (acc, fromVertex: Vertex, outerIndex, array) => {
           const uuidFrom = array[outerIndex].uuid;
 
-          const edges = array.map((toVector: Vertex, innerIndex) => {
+          const edges = array.map((toVertex: Vertex, innerIndex) => {
             // if (outerIndex >= innerIndex) {
             if (outerIndex === innerIndex) {
               return;
             }
 
             if (
-              fromVector.vector.distanceTo(toVector.vector) > radius * maxEdgeLengthPercentage
+              fromVertex.vector.distanceTo(toVertex.vector) > radius * maxEdgeLengthPercentage
             ) {
               return;
             }
 
             // Check if an edge uuid has already been generated
-            let edgeId = edgeIdsMap[`${fromVector.uuid}:${toVector.uuid}`];
+            let edgeId = edgeIdsMap[`${fromVertex.uuid}:${toVertex.uuid}`];
 
             // If no edge uuid set create dual paired keys for the next edgeId search
             if (!edgeId) {
               edgeId = uuidv4();
-              edgeIdsMap[`${fromVector.uuid}:${toVector.uuid}`] = edgeId;
-              edgeIdsMap[`${toVector.uuid}:${fromVector.uuid}`] = edgeId;
+              edgeIdsMap[`${fromVertex.uuid}:${toVertex.uuid}`] = edgeId;
+              edgeIdsMap[`${toVertex.uuid}:${fromVertex.uuid}`] = edgeId;
             }
 
             return {
-              distance: fromVector.vector.distanceTo(toVector.vector),
-              toVector,
-              fromVector,
+              distance: fromVertex.vector.distanceTo(toVertex.vector),
+              toVertex,
+              fromVertex,
               uuid: edgeId,
-              highlight: false,
             };
           }).filter((edge) => !!edge);
 
@@ -286,13 +302,17 @@ export default create<NetworkState>((set, get) => {
             return {
               ...edgeAcc,
               [edge.uuid]: {
-                fromVector: {
-                  vector: edge.fromVector.vector,
-                  uuid: edge.fromVector.uuid,
+                fromVertex: {
+                  vector: edge.fromVertex.vector,
+                  uuid: edge.fromVertex.uuid,
+                  owner: PLAYER.NEUTRAL,
+                  contestProgress: 0,
                 },
-                toVector: {
-                  vector: edge.toVector.vector,
-                  uuid: edge.toVector.uuid,
+                toVertex: {
+                  vector: edge.toVertex.vector,
+                  uuid: edge.toVertex.uuid,
+                  owner: PLAYER.NEUTRAL,
+                  contestProgress: 0,
                 },
               },
             };
@@ -353,7 +373,7 @@ export default create<NetworkState>((set, get) => {
           return {
             vector: new THREE.Vector3(x, y, z),
             uuid: uuidv4(),
-            highlight: false,
+            owner: PLAYER.NEUTRAL,
           };
         }
       );

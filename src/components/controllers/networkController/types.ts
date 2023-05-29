@@ -2,10 +2,9 @@ import * as THREE from 'three';
 
 export type AdjacencyEdge = {
   distance: number,
-  fromVector: Vertex,
-  toVector: Vertex,
+  fromVertex: Vertex,
+  toVertex: Vertex,
   uuid: string,
-  highlight: boolean,
 }
 
 export type AdjacencyMap = {
@@ -16,8 +15,8 @@ export type AdjacencyMap = {
 
 export type EdgeNeighbours = {
   [key: string]: {
-    fromVector: Vertex,
-    toVector: Vertex,
+    fromVertex: Vertex,
+    toVertex: Vertex,
   },
 }
 
@@ -41,6 +40,10 @@ export enum PLAYER {
   NEUTRAL = 'NEUTRAL',
   PLAYER_1 = 'PLAYER_1',
   PLAYER_2 = 'PLAYER_2',
+}
+
+export type PLAYER_COLOR = {
+  [key: string]: string,
 }
 
 // TODO: Come up with more creative names for these
@@ -80,7 +83,7 @@ export type Vertex = {
   vector: THREE.Vector3,
   uuid: string,
   hackBot?: HackBot,
-  highlight: boolean,
+  owner: keyof typeof PLAYER,
 }
 
 export interface NetworkState {
@@ -88,6 +91,7 @@ export interface NetworkState {
   radius: number,
   vertexNumber: number,
   vertexPlacementChaosFactor: number,
+  playerColors: PLAYER_COLOR,
 
   // Edges (NETCONs)
   adjacencyMap: AdjacencyMap,

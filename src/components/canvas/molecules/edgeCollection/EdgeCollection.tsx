@@ -1,26 +1,28 @@
 import React from 'react';
-import { EdgeNeighbours } from '../../../controllers/networkController/types';
+import { EdgeNeighbours, PLAYER_COLOR } from '../../../controllers/networkController/types';
 import { Edge } from '../../atoms/edge/Edge';
 
 interface Props {
   edgeNeighbours: EdgeNeighbours;
+  playerColors: PLAYER_COLOR;
 }
 
-export const EdgeCollection = ({ edgeNeighbours }: Props) => {
+export const EdgeCollection = ({ edgeNeighbours, playerColors }: Props) => {
   return (
     <group>
       {
         Object.keys(edgeNeighbours).map((edgeNeighbour) => {
-          const fromVector = edgeNeighbours[edgeNeighbour].fromVector;
-          const { x: x1, y: y1, z: z1 } = fromVector.vector;
-          const toVector = edgeNeighbours[edgeNeighbour].toVector;
-          const { x: x2, y: y2, z: z2 } = toVector.vector;
+          const fromVertex = edgeNeighbours[edgeNeighbour].fromVertex;
+          const { x: x1, y: y1, z: z1 } = fromVertex.vector;
+          const toVertex = edgeNeighbours[edgeNeighbour].toVertex;
+          const { x: x2, y: y2, z: z2 } = toVertex.vector;
 
           return (
             <Edge
               key={`Edge: [${x1}, ${y1}, ${z1}], [${x2}, ${y2}, ${z2}]`}
-              fromVector={fromVector}
-              toVector={toVector}
+              fromVertex={fromVertex}
+              toVertex={toVertex}
+              playerColors={playerColors}
             />
           );
         })
