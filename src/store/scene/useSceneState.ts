@@ -1,11 +1,5 @@
 import { create } from 'zustand';
-
-export enum SCENE {
-  GAME_OVER = 'GAME_OVER',
-  LOADING = 'LOADING',
-  MAIN_MENU = 'MAIN_MENU',
-  MATCH = 'MATCH',
-}
+import { SCENE } from '@/store/scene/types';
 
 interface SceneState {
   scene: keyof typeof SCENE,

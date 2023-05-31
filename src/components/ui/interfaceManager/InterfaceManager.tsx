@@ -1,15 +1,15 @@
-import React from 'react';
 import {
   InterfaceWrapper
 } from './styles';
 import { ResourcePanel } from '../resourcePanel/ResourcePanel';
-import useSceneState, { SCENE } from '../../managers/sceneManager/useSceneState';
-import useNetworkState from '../../controllers/networkController/useNetworkState';
 import { TimePanel } from '../timePanel/TimePanel';
+import useResourceState from '@/store/resource/useResourceState';
+import useSceneState from '@/store/scene/useSceneState';
+import { SCENE } from '@/store/scene/types';
 
 export const InterfaceManager = () => {
   const { scene } = useSceneState();
-  const { resources, resourcesPerSecond } = useNetworkState();
+  const { resources, resourcesPerSecond } = useResourceState();
   // Debug
   // useControls('StatsBar', {
   //   finance: folder({

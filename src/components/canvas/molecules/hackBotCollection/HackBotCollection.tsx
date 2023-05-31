@@ -1,6 +1,5 @@
-import React from 'react';
-import { HackBot, Vertex } from '../../../controllers/networkController/types';
 import { HackBotModel } from '../../atoms/hackBotModel/HackBotModel';
+import { HackBot } from '@/store/hackBot/types';
 
 interface Props {
   hackBots: HackBot[];

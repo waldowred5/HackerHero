@@ -1,11 +1,11 @@
-import React from 'react';
-import useScene, { SCENE } from './useSceneState';
-import { MainMenu } from '../../canvas/scenes/mainMenu/MainMenu';
-import { Loading } from '../../canvas/scenes/loading/Loading';
-import { Match } from '../../canvas/scenes/match/Match';
-import { SceneLights } from '../../canvas/organisms/sceneLights/SceneLights';
+import useScene from '@/store/scene/useSceneState';
+import { MainMenu } from '@/components/canvas/scenes/mainMenu/MainMenu';
+import { Loading } from '@/components/canvas/scenes/loading/Loading';
+import { Match } from '@/components/canvas/scenes/match/Match';
+import { SceneLights } from '@/components/canvas/organisms/sceneLights/SceneLights';
 import { useControls } from 'leva';
-import { GameOver } from '../../canvas/scenes/gameOver/GameOver';
+import { GameOver } from '@/components/canvas/scenes/gameOver/GameOver';
+import { SCENE } from '@/store/scene/types';
 
 export const SceneManager = () => {
   const { scene, updateScene } = useScene();

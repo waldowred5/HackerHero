@@ -1,6 +1,6 @@
-import React from 'react';
-import { EdgeNeighbours, PLAYER_COLOR } from '../../../controllers/networkController/types';
 import { Edge } from '../../atoms/edge/Edge';
+import { EdgeNeighbours } from '@/store/relation/types';
+import { PLAYER_COLOR } from '@/store/player/types';
 
 interface Props {
   edgeNeighbours: EdgeNeighbours;

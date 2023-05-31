@@ -1,65 +1,132 @@
-import React, { Suspense, useEffect, useRef } from 'react';
+import { Suspense, useEffect, useRef } from 'react';
 import { NetworkModel } from '../../canvas/organisms/networkModel/NetworkModel';
-import useNetworkState from './useNetworkState';
 import { button, folder, useControls } from 'leva';
 import { useFrame } from '@react-three/fiber';
 import { OrbitControls, useKeyboardControls } from '@react-three/drei';
 import { Physics, RapierRigidBody, RigidBody } from '@react-three/rapier';
-import { RESOURCE } from './types';
 import animationInterval from '../../../utils/animation-interval';
+import useMatchState from '@/store/match/useMatchState';
+import useEdgeState from '@/store/edge/useEdgeState';
+import { RESOURCE } from '@/store/resource/types';
+import useResourceState from '@/store/resource/useResourceState';
+import useRelationState from '@/store/relation/useRelationState';
+import usePlayerState from '@/store/player/usePlayerState';
+import useHackBotState from '@/store/hackBot/useHackBotState';
+import useNetworkState from '@/store/network/useNetworkState';
+import useVertexState from '@/store/vertex/useVertexState';
+import { shallow } from 'zustand/shallow';
 
 export const NetworkController = () => {
-  const body = useRef<RapierRigidBody>(null);
+  const body = useRef<RapierRigidBody | null>(null);
   const [, getKeys] = useKeyboardControls();
-  const {
-    // General
-    generateNetwork,
-    radius,
-    vertexNumber,
-    updateVertexNumber,
-    vertexPlacementChaosFactor,
-    updateVertexPlacementChaosFactor,
-    playerColors,
 
-    // Edges
-    adjacencyMap,
-    edgeNeighbours,
+  const {
     maxEdgeLengthPercentage,
     updateMaxEdgeLengthPercentage,
+  } = useEdgeState((state) => {
+    return {
+      maxEdgeLengthPercentage: state.maxEdgeLengthPercentage,
+      updateMaxEdgeLengthPercentage: state.updateMaxEdgeLengthPercentage,
+    };
+  }, shallow);
 
-    // Vertices
-    vertices,
-
-    // Orb
-    orbOpacity,
-    updateOrbOpacity,
-    orbRadius,
-    updateOrbRadius,
-
-    // HackBots
+  const {
     hackBots,
     createHackBot,
-    removeHackBot,
+    deleteHackBot,
+  } = useHackBotState((state) => {
+    return {
+      hackBots: state.hackBots,
+      createHackBot: state.createHackBot,
+      deleteHackBot: state.deleteHackBot,
+    };
+  }, shallow);
 
-    // Resources
-    resourcesPerSecond,
-    updateResource,
-
-    // Time
+  const {
     startMatch,
     endMatch,
     resetMatch,
-  } = useNetworkState();
+  } = useMatchState((state) => {
+    return {
+      startMatch: state.startMatch,
+      endMatch: state.endMatch,
+      resetMatch: state.resetMatch,
+    };
+  }, shallow);
+
+  const {
+    orbOpacity,
+    orbRadius,
+    radius,
+    createNetwork,
+    updateOrbOpacity,
+    updateOrbRadius,
+  } = useNetworkState((state) => {
+    return {
+      orbOpacity: state.orbOpacity,
+      orbRadius: state.orbRadius,
+      radius: state.radius,
+      createNetwork: state.createNetwork,
+      updateOrbOpacity: state.updateOrbOpacity,
+      updateOrbRadius: state.updateOrbRadius,
+    };
+  }, shallow);
+
+  const {
+    playerColors,
+  } = usePlayerState((state) => {
+    return {
+      playerColors: state.playerColors,
+    };
+  }, shallow);
+
+  const {
+    adjacencyMap,
+    edgeNeighbours,
+  } = useRelationState((state) => {
+    return {
+      adjacencyMap: state.adjacencyMap,
+      edgeNeighbours: state.edgeNeighbours,
+    };
+  }, shallow);
+
+  const {
+    resourcesPerSecond,
+    updateResource,
+  } = useResourceState((state) => {
+    return {
+      resourcesPerSecond: state.resourcesPerSecond,
+      updateResource: state.updateResource,
+    };
+  }, shallow);
+
+  const {
+    vertexNumber,
+    vertexPlacementChaosFactor,
+    vertices,
+    updateVertexPlacementChaosFactor,
+    updateVertexNumber,
+  } = useVertexState((state) => {
+    return {
+      vertexNumber: state.vertexNumber,
+      vertexPlacementChaosFactor: state.vertexPlacementChaosFactor,
+      vertices: state.vertices,
+      updateVertexPlacementChaosFactor: state.updateVertexPlacementChaosFactor,
+      updateVertexNumber: state.updateVertexNumber,
+    };
+  }, shallow);
 
   // Init Vertices
   useEffect(() => {
-    generateNetwork();
+    resetMatch();
+    createNetwork();
     startMatch();
   }, [vertexNumber, vertexPlacementChaosFactor, maxEdgeLengthPercentage]);
 
   useEffect(() => {
+    console.log({ adjacencyMap });
     console.log({ edgeNeighbours });
-  }, [edgeNeighbours]);
+  }, [adjacencyMap, edgeNeighbours]);
 
   useEffect(() => {
     // TODO: Does putting this in its own useEffect create
@@ -86,7 +153,7 @@ export const NetworkController = () => {
       }),
       newMatch: button(() => {
         resetMatch();
-        generateNetwork();
+        createNetwork();
         startMatch();
       }),
     }),
@@ -161,7 +228,7 @@ export const NetworkController = () => {
             playerColors={playerColors}
             hackBots={hackBots}
             createHackBot={createHackBot}
-            removeHackBot={removeHackBot}
+            deleteHackBot={deleteHackBot}
             maxEdgeLengthPercentage={maxEdgeLengthPercentage}
             orbOpacity={orbOpacity}
             orbRadius={orbRadius}

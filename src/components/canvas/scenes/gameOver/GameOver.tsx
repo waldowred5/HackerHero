@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
-import useScene, { SCENE } from '../../../managers/sceneManager/useSceneState';
+import { useState } from 'react';
+import useScene from '../../../../store/scene/useSceneState';
 import * as THREE from 'three';
 import { Text } from '@react-three/drei';
+import { SCENE } from '@/store/scene/types';
 
 export const GameOver = () => {
   const { updateScene } = useScene();

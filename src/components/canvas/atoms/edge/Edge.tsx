@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import * as THREE from 'three';
-import { PLAYER, PLAYER_COLOR, Vertex } from '../../../controllers/networkController/types';
 import vertexShader from '../../../../assets/shaders/cylinders/vertex.glsl';
 import fragmentShader from '../../../../assets/shaders/cylinders/fragment.glsl';
 import { useControls } from 'leva';
+import { Vertex } from '@/store/vertex/types';
+import { PLAYER, PLAYER_COLOR } from '@/store/player/types';
 
 interface Props {
   fromVertex: Vertex;

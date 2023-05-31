@@ -1,0 +1,6 @@
+export enum SCENE {
+  GAME_OVER = 'GAME_OVER',
+  LOADING = 'LOADING',
+  MAIN_MENU = 'MAIN_MENU',
+  MATCH = 'MATCH',
+}

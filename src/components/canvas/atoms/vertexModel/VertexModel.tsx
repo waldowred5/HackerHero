@@ -1,21 +1,20 @@
-import React, { useRef } from 'react';
+import { useRef } from 'react';
 import * as THREE from 'three';
 import { Group, Mesh } from 'three';
 import { Text } from '@react-three/drei';
 import { ThreeEvent, useFrame } from '@react-three/fiber';
-import {
-  HackBotProps, PLAYER,
-  Vertex
-} from '../../../controllers/networkController/types';
+import { HackBotProps } from '@/store/hackBot/types';
+import { Vertex } from '@/store/vertex/types';
+import { PLAYER } from '@/store/player/types';
 
 interface Props {
   createHackBot: ({ vertex }: HackBotProps) => void,
-  removeHackBot: (uuid: string) => void,
+  deleteHackBot: (uuid: string) => void,
   vertex: Vertex,
   uuid: string,
 }
 
-export const VertexModel = ({ createHackBot, removeHackBot, vertex, uuid }: Props) => {
+export const VertexModel = ({ createHackBot, deleteHackBot, vertex, uuid }: Props) => {
   const ref = useRef<Mesh | null>(null);
   const textRef = useRef<Group | null>(null);
   const { owner } = vertex;
@@ -40,7 +39,7 @@ export const VertexModel = ({ createHackBot, removeHackBot, vertex, uuid }: Prop
       return;
     }
 
-    removeHackBot(vertex.hackBot.uuid);
+    deleteHackBot(vertex.hackBot.uuid);
   };
 
   const changeVertexColor = (event: ThreeEvent<PointerEvent>, color: string) => {

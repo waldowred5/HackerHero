@@ -1,22 +1,18 @@
-import React from 'react';
 import { NetworkOrb } from '../../atoms/networkOrb/NetworkOrb';
-import {
-  AdjacencyMap,
-  EdgeNeighbours,
-  HackBot,
-  HackBotProps, PLAYER_COLOR,
-  Vertex
-} from '../../../controllers/networkController/types';
 import { EdgeCollection } from '../../molecules/edgeCollection/EdgeCollection';
 import { VertexCollection } from '../../molecules/vertexCollection/VertexCollection';
 import { HackBotCollection } from '../../molecules/hackBotCollection/HackBotCollection';
+import { EdgeNeighbours } from '@/store/relation/types';
+import { PLAYER_COLOR } from '@/store/player/types';
+import { HackBot, HackBotProps } from '@/store/hackBot/types';
+import { Vertex } from '@/store/vertex/types';
 
 interface Props {
   edgeNeighbours: EdgeNeighbours,
   playerColors: PLAYER_COLOR,
   hackBots: HackBot[],
   createHackBot: ({ vertex }: HackBotProps) => void,
-  removeHackBot: (uuid: string) => void,
+  deleteHackBot: (uuid: string) => void,
   orbOpacity: number,
   orbRadius: number,
   updateOrbOpacity: (value: number) => void,
@@ -30,7 +26,7 @@ export const NetworkModel = (
     playerColors,
     hackBots,
     createHackBot,
-    removeHackBot,
+    deleteHackBot,
     orbOpacity,
     updateOrbOpacity,
     orbRadius,
@@ -48,7 +44,7 @@ export const NetworkModel = (
 
       <VertexCollection
         createHackBot={createHackBot}
-        removeHackBot={removeHackBot}
+        deleteHackBot={deleteHackBot}
         vertices={vertices}
       />
 
