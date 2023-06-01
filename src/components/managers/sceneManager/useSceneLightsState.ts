@@ -13,6 +13,7 @@ interface SceneState {
   lights: Light[],
 }
 
+// TODO: Find a new home for this
 export default create<SceneState>(() => {
   return {
     lights: [

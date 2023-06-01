@@ -1,21 +1,19 @@
-import React, { useRef } from 'react';
+import { useRef } from 'react';
 import * as THREE from 'three';
 import { Group, Mesh } from 'three';
 import { Text } from '@react-three/drei';
 import { ThreeEvent, useFrame } from '@react-three/fiber';
-import {
-  HackBotProps, PLAYER,
-  Vertex
-} from '../../../controllers/networkController/types';
+import { Vertex } from '@/store/vertex/types';
+import { PLAYER } from '@/store/player/types';
 
 interface Props {
-  createHackBot: ({ vertex }: HackBotProps) => void,
-  removeHackBot: (uuid: string) => void,
+  handleHackBotCreation: (vertexId: string, player: PLAYER) => void,
+  handleHackBotDeletion: (vertexId: string) => void,
   vertex: Vertex,
   uuid: string,
 }
 
-export const VertexModel = ({ createHackBot, removeHackBot, vertex, uuid }: Props) => {
+export const VertexModel = ({ handleHackBotCreation, handleHackBotDeletion, vertex, uuid }: Props) => {
   const ref = useRef<Mesh | null>(null);
   const textRef = useRef<Group | null>(null);
   const { owner } = vertex;
@@ -30,17 +28,17 @@ export const VertexModel = ({ createHackBot, removeHackBot, vertex, uuid }: Prop
   // TODO: Use raycaster and test for first intersection with a
   //  vertex to prevent placing / removing 2 HackBots at once
   const leftClickHandler = () => {
-    createHackBot({ vertex });
+    handleHackBotCreation(vertex.uuid, PLAYER.PLAYER_1);
   };
 
   const rightClickHandler = () => {
-    if (!vertex.hackBot) {
+    if (!vertex.hackBotId) {
       console.log('No HackBot to remove!');
 
       return;
     }
 
-    removeHackBot(vertex.hackBot.uuid);
+    handleHackBotDeletion(vertex.uuid);
   };
 
   const changeVertexColor = (event: ThreeEvent<PointerEvent>, color: string) => {

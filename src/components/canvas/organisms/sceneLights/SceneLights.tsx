@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import { useRef } from 'react';
 import { PointLight } from 'three';
 import useSceneLightsState from '../../../managers/sceneManager/useSceneLightsState';
 

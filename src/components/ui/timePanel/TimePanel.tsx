@@ -1,8 +1,8 @@
-import React, { useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { TimeHeading, TimePanelWrapper } from './styles';
 import { addEffect } from '@react-three/fiber';
-import useNetworkState from '../../controllers/networkController/useNetworkState';
-import { MATCH_PHASE } from '../../controllers/networkController/types';
+import { MATCH_PHASE } from '@/store/match/types';
+import useMatchState from '@/store/match/useMatchState';
 
 export const TimePanel = () => {
   const timeRef = useRef<HTMLHeadingElement | null>(null);
@@ -10,7 +10,7 @@ export const TimePanel = () => {
   // Start Timer
   useEffect(() => {
     const unsubscribeEffect = addEffect(() => {
-      const { matchPhase, matchStartTime, matchEndTime } = useNetworkState.getState();
+      const { matchPhase, matchStartTime, matchEndTime } = useMatchState.getState();
 
       let elapsedTime = 0;
 

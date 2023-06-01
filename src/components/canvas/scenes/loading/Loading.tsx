@@ -1,6 +1,7 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { Text } from '@react-three/drei';
-import useSceneState, { SCENE } from '../../../managers/sceneManager/useSceneState';
+import useSceneState from '@/store/scene/useSceneState';
+import { SCENE } from '@/store/scene/types';
 
 export const Loading = () => {
   const { updateScene } = useSceneState();

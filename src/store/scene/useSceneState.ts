@@ -1,16 +1,5 @@
 import { create } from 'zustand';
-
-export enum SCENE {
-  GAME_OVER = 'GAME_OVER',
-  LOADING = 'LOADING',
-  MAIN_MENU = 'MAIN_MENU',
-  MATCH = 'MATCH',
-}
-
-interface SceneState {
-  scene: keyof typeof SCENE,
-  updateScene: (newScene: keyof typeof SCENE) => void,
-}
+import { SCENE, SceneState } from '@/store/scene/types';
 
 export default create<SceneState>((set) => {
   return {

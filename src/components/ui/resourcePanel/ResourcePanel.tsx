@@ -1,4 +1,3 @@
-import React from 'react';
 import {
   IconWrapper,
   ResourceGenerationHeading,
@@ -8,13 +7,15 @@ import {
   SecondaryRowWrapper
 } from './styles';
 import { FaLaptopCode, HiChip } from 'react-icons/all';
-import { RESOURCE } from '../../controllers/networkController/types';
+import { RESOURCE } from '@/store/resource/types';
 
 interface Props {
   resources: {
     [key: string]: number,
+    [key: string]: number,
   };
   resourcesPerSecond: {
+    [key: string]: number,
     [key: string]: number,
   }
 }
