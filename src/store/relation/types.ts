@@ -1,9 +1,9 @@
-import { Vertex } from '@/store/vertex/types';
+import { VertexMap } from '@/store/vertex/types';
 
 export type AdjacencyEdge = {
   distance: number,
-  fromVertex: Vertex,
-  toVertex: Vertex,
+  fromVertexId: string,
+  toVertexId: string,
   uuid: string,
 }
 
@@ -15,15 +15,20 @@ export type AdjacencyMap = {
 
 export type EdgeNeighbours = {
   [key: string]: {
-    fromVertex: Vertex,
-    toVertex: Vertex,
+    contest: {
+      fromVertex: number,
+      toVertex: number,
+    },
+    distance: number,
+    fromVertexId: string,
+    toVertexId: string,
   },
 }
 
 export interface GenerateAdjacencyMapProps {
   radius: number,
   maxEdgeLengthPercentage: number,
-  vertices: Vertex[],
+  vertices: VertexMap,
 }
 
 export interface RelationState {
@@ -39,7 +44,4 @@ export interface RelationState {
     }: GenerateAdjacencyMapProps
   ) => void,
   createEdgeNeighbours: () => void,
-
-  // TODO: Remove this
-  updateEdgeNeighbours: (hackBotId: string) => void,
 }

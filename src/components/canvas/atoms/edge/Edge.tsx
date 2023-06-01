@@ -1,42 +1,25 @@
-import { useState } from 'react';
 import * as THREE from 'three';
 import vertexShader from '../../../../assets/shaders/cylinders/vertex.glsl';
 import fragmentShader from '../../../../assets/shaders/cylinders/fragment.glsl';
-import { useControls } from 'leva';
 import { Vertex } from '@/store/vertex/types';
 import { PLAYER, PLAYER_COLOR } from '@/store/player/types';
 
 interface Props {
   fromVertex: Vertex;
+  fromVertexOwnershipPercentage: number;
   toVertex: Vertex;
+  toVertexOwnershipPercentage: number;
   playerColors: PLAYER_COLOR;
 }
 
-export const Edge = ({ fromVertex, toVertex, playerColors }: Props) => {
-  const [fromVertexOwnershipPercentage, setFromVertexOwnershipPercentage] = useState(0.0);
-  const [toVertexOwnershipPercentage, setVertexToOwnershipPercentage] = useState(0.0);
-
-  useControls('Edges', {
-    fromVertexOwnershipPercentage: {
-      value: 0.0,
-      min: 0.0,
-      max: 1.0,
-      step: 0.01,
-      onChange: (value: number) => {
-        setFromVertexOwnershipPercentage(value);
-      }
-    },
-    toVertexOwnershipPercentage: {
-      value: 0.0,
-      min: 0.0,
-      max: 1.0,
-      step: 0.01,
-      onChange: (value: number) => {
-        setVertexToOwnershipPercentage(value);
-      }
-    },
-  });
-
+export const Edge = (
+  {
+    fromVertex,
+    fromVertexOwnershipPercentage,
+    toVertex,
+    toVertexOwnershipPercentage,
+    playerColors
+  }: Props) => {
   const cylinderRadius = 0.02;
   const cylinderTesselation = {
     radial: 16,

@@ -104,6 +104,8 @@ export const NetworkController = () => {
     vertexNumber,
     vertexPlacementChaosFactor,
     vertices,
+    handleHackBotCreation,
+    handleHackBotDeletion,
     updateVertexPlacementChaosFactor,
     updateVertexNumber,
   } = useVertexState((state) => {
@@ -111,6 +113,8 @@ export const NetworkController = () => {
       vertexNumber: state.vertexNumber,
       vertexPlacementChaosFactor: state.vertexPlacementChaosFactor,
       vertices: state.vertices,
+      handleHackBotCreation: state.handleHackBotCreation,
+      handleHackBotDeletion: state.handleHackBotDeletion,
       updateVertexPlacementChaosFactor: state.updateVertexPlacementChaosFactor,
       updateVertexNumber: state.updateVertexNumber,
     };
@@ -227,8 +231,8 @@ export const NetworkController = () => {
             edgeNeighbours={edgeNeighbours}
             playerColors={playerColors}
             hackBots={hackBots}
-            createHackBot={createHackBot}
-            deleteHackBot={deleteHackBot}
+            handleHackBotCreation={handleHackBotCreation}
+            handleHackBotDeletion={handleHackBotDeletion}
             maxEdgeLengthPercentage={maxEdgeLengthPercentage}
             orbOpacity={orbOpacity}
             orbRadius={orbRadius}

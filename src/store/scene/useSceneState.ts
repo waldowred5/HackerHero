@@ -1,10 +1,5 @@
 import { create } from 'zustand';
-import { SCENE } from '@/store/scene/types';
-
-interface SceneState {
-  scene: keyof typeof SCENE,
-  updateScene: (newScene: keyof typeof SCENE) => void,
-}
+import { SCENE, SceneState } from '@/store/scene/types';
 
 export default create<SceneState>((set) => {
   return {

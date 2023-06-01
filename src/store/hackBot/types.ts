@@ -1,6 +1,5 @@
 import { PLAYER } from '@/store/player/types';
 import { RESOURCE } from '@/store/resource/types';
-import { Vertex } from '@/store/vertex/types';
 
 // TODO: Come up with more creative names for these
 export enum HACK_BOT_CLASS {
@@ -19,24 +18,30 @@ export type HackBot = {
   botClass: keyof typeof HACK_BOT_CLASS,
   resourceCost: number,
   resourceRequirement: keyof typeof RESOURCE,
+  resourcesPerSecond: number,
+  resourcesPerSecondType: keyof typeof RESOURCE,
   owner: keyof typeof PLAYER,
   uuid: string,
-  vertex: Vertex,
 }
 
-export interface HackBotProps {
-  vertex: Vertex,
+export type HackBotBlueprint = {
+  botClass: keyof typeof HACK_BOT_CLASS,
+  resourceCost: number,
+  resourceRequirement: keyof typeof RESOURCE,
+  resourcesPerSecond: number,
+  resourcesPerSecondType: keyof typeof RESOURCE,
+}
+
+export interface HackBotMap {
+  [key: string]: HackBot,
 }
 
 export interface HackBotState {
-  hackBots: HackBot[],
+  hackBots: HackBotMap,
+  selectedHackBotBlueprint: HackBotBlueprint,
 
   // Actions
-  createHackBot: (
-    {
-      vertex,
-    }: HackBotProps
-  ) => void,
+  createHackBot: (uuid: string, player: PLAYER) => void,
   deleteHackBot: (uuid: string) => void
   resetHackBots: () => void,
 }

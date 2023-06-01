@@ -1,15 +1,18 @@
 import { create } from 'zustand';
 import * as THREE from 'three';
 import { v4 as uuidv4 } from 'uuid';
-import { VertexState } from './types';
+import { VertexMap, VertexState } from './types';
 import { PLAYER } from '@/store/player/types';
-import { HackBot } from '@/store/hackBot/types';
+import useHackBotState from '@/store/hackBot/useHackBotState';
+import { HACK_BOT_CLASS, HackBot } from '@/store/hackBot/types';
+import { RESOURCE } from '@/store/resource/types';
+import useResourceState from '@/store/resource/useResourceState';
 
 export default create<VertexState>((set, get) => {
   return {
     vertexNumber: 14,
     vertexPlacementChaosFactor: 350,
-    vertices: [],
+    vertices: {},
 
     // Actions
     createVertices: (
@@ -26,7 +29,8 @@ export default create<VertexState>((set, get) => {
         const offset = 2 / vertexNumber;
         const increment = Math.PI * (3 - Math.sqrt(5));
 
-        const vertices = Array.from(Array(vertexNumber)).map((
+        const vertices: VertexMap = Array.from(Array(vertexNumber)).reduce((
+            acc: VertexMap,
             sample,
             index
           ) => {
@@ -41,12 +45,17 @@ export default create<VertexState>((set, get) => {
             const y = yMod * radius;
             const z = zMod * radius;
 
+            const uuid = uuidv4();
+
             return {
-              vector: new THREE.Vector3(x, y, z),
-              uuid: uuidv4(),
-              owner: PLAYER.NEUTRAL,
+              ...acc,
+              [uuid]: {
+                vector: new THREE.Vector3(x, y, z),
+                owner: PLAYER.NEUTRAL,
+                uuid,
+              },
             };
-          }
+          }, {}
         );
 
         return {
@@ -55,31 +64,70 @@ export default create<VertexState>((set, get) => {
       });
     },
 
-    // TODO: Remove this
-    updateVertices: (hackBotId: string, hackBot: HackBot) => {
+    handleHackBotCreation: (vertexId: string, player: PLAYER) => {
+      if (get().vertices[vertexId].hackBotId) {
+        console.log('A HackBot already exists on this Vertex');
+
+        return;
+      }
+
+      // Check resource cost
+      const selectedHackBotBlueprint = useHackBotState.getState().selectedHackBotBlueprint;
+      const canAffordNewHackBot =
+        useResourceState.getState().resources[selectedHackBotBlueprint.resourceRequirement]
+        >= selectedHackBotBlueprint.resourceCost;
+
+      if (!canAffordNewHackBot) {
+        // TODO: Play error sound here
+        console.log('Cannot afford new HackBot');
+
+        return;
+      }
+
+      // Pay resource cost
+      useResourceState.getState().updateResource(RESOURCE[selectedHackBotBlueprint.resourceRequirement], -selectedHackBotBlueprint.resourceCost);
+      // Update resource generation
+      useResourceState.getState().updateResourcesPerSecond(RESOURCE[selectedHackBotBlueprint.resourcesPerSecondType], selectedHackBotBlueprint.resourcesPerSecond);
+
+      const newHackBotUuid = uuidv4();
+
+      useHackBotState.getState().createHackBot(newHackBotUuid, player);
+
       set((state) => {
-        const vertices = state.vertices.map((vertex) => {
-          if (vertex.uuid === hackBotId) {
-            return {
-              ...vertex,
-              hackBot,
-              owner: PLAYER.PLAYER_1,
-            };
-          }
-
-          return vertex;
-        });
-
         return {
-          vertices,
+          vertices: {
+            ...state.vertices,
+            [vertexId]: {
+              ...state.vertices[vertexId],
+              hackBotId: newHackBotUuid,
+              owner: player,
+            },
+          },
         };
       });
     },
 
-    updateVertexPlacementChaosFactor: (newVertexPlacementChaosFactor: number) => {
-      set(() => {
+    handleHackBotDeletion: (vertexId: string) => {
+      const hackBotId = get().vertices[vertexId].hackBotId;
+
+      if (!hackBotId) {
+        console.log('No HackBot exists on this Vertex');
+
+        return;
+      }
+
+      useHackBotState.getState().deleteHackBot(hackBotId);
+
+      set((state) => {
         return {
-          vertexPlacementChaosFactor: newVertexPlacementChaosFactor,
+          vertices: {
+            ...state.vertices,
+            [vertexId]: {
+              ...state.vertices[vertexId],
+              hackBotId: null,
+              owner: PLAYER.NEUTRAL,
+            },
+          },
         };
       });
     },
@@ -88,6 +136,28 @@ export default create<VertexState>((set, get) => {
       set(() => {
         return {
           vertexNumber: newVertexNumber,
+        };
+      });
+    },
+
+    updateVertexOwner: (vertexId: string, newVertexOwner: keyof typeof PLAYER) => {
+      set((state) => {
+        return {
+          vertices: {
+            ...state.vertices,
+            [vertexId]: {
+              ...state.vertices[vertexId],
+              owner: newVertexOwner,
+            }
+          },
+        };
+      });
+    },
+
+    updateVertexPlacementChaosFactor: (newVertexPlacementChaosFactor: number) => {
+      set(() => {
+        return {
+          vertexPlacementChaosFactor: newVertexPlacementChaosFactor,
         };
       });
     },

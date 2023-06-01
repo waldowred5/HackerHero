@@ -1,7 +1,7 @@
-import { RESOURCE, ResourceState } from '@/store/resource/types';
 import { create } from 'zustand';
+import { RESOURCE, ResourceState } from '@/store/resource/types';
 
-export default create<ResourceState>((set, get) => {
+export default create<ResourceState>((set) => {
   return {
     resources: {
       [RESOURCE.HACKING_POWER]: 275,

@@ -1,28 +1,37 @@
 import { VertexModel } from '../../atoms/vertexModel/VertexModel';
-import { HackBotProps } from '@/store/hackBot/types';
-import { Vertex } from '@/store/vertex/types';
+import { VertexMap } from '@/store/vertex/types';
+import { PLAYER } from '@/store/player/types';
+import { HackBotModel } from '@/components/canvas/atoms/hackBotModel/HackBotModel';
 
 interface Props {
-  createHackBot: ({ vertex }: HackBotProps) => void,
-  deleteHackBot: (uuid: string) => void,
-  vertices: Vertex[],
+  handleHackBotCreation: (vertexId: string, player: PLAYER) => void,
+  handleHackBotDeletion: (vertexId: string) => void,
+  vertices: VertexMap;
 }
 
-export const VertexCollection = ({ createHackBot, deleteHackBot, vertices }: Props) => {
+export const VertexCollection = ({ handleHackBotCreation, handleHackBotDeletion, vertices }: Props) => {
   return (
     <>
-       {
-         vertices.map((vertex, i) => {
-           return (
-             <VertexModel
-               key={`Vertex ${i}: ${vertex.vector.x}`}
-               createHackBot={createHackBot}
-               deleteHackBot={deleteHackBot}
-               vertex={vertex}
-               uuid={vertex.uuid}
-             />
-           );
-         })
+      {
+        Object.entries(vertices).map((vertex, i) => {
+          return (
+            <>
+              <VertexModel
+                key={`Vertex: ${vertex[1].uuid}`}
+                handleHackBotCreation={handleHackBotCreation}
+                handleHackBotDeletion={handleHackBotDeletion}
+                vertex={vertex[1]}
+                uuid={vertex[0]}
+              />
+              {
+                 vertex[1].hackBotId && <HackBotModel
+                  key={`HackBot: ${vertex[1].hackBotId}`}
+                  vector={vertex[1].vector}
+                />
+              }
+            </>
+          );
+        })
       }
     </>
   );

@@ -1,12 +1,15 @@
 import * as THREE from 'three';
 import { PLAYER } from '@/store/player/types';
-import { HackBot } from '@/store/hackBot/types';
 
 export type Vertex = {
   vector: THREE.Vector3,
-  uuid: string,
-  hackBot?: HackBot,
+  hackBotId: string | null,
   owner: keyof typeof PLAYER,
+  uuid: string,
+}
+
+export interface VertexMap {
+  [key: string]: Vertex,
 }
 
 interface GenerateVerticesProps {
@@ -18,7 +21,7 @@ interface GenerateVerticesProps {
 export interface VertexState {
   vertexNumber: number,
   vertexPlacementChaosFactor: number,
-  vertices: Vertex[],
+  vertices: VertexMap,
 
   // Actions
   createVertices: (
@@ -28,10 +31,9 @@ export interface VertexState {
       vertexNumber,
     }: GenerateVerticesProps
   ) => void,
-  
-  // TODO: Remove this
-  updateVertices: (hackBotId: string, hackBot: HackBot) => void,
-  
-  updateVertexPlacementChaosFactor: (newVertexPlacementChaosFactor: number) => void,
+  handleHackBotCreation: (vertexId: string, player: PLAYER) => void,
+  handleHackBotDeletion: (vertexId: string) => void,
   updateVertexNumber: (newVertexNumber: number) => void,
+  updateVertexOwner: (vertexId: string, newVertexOwner: keyof typeof PLAYER) => void,
+  updateVertexPlacementChaosFactor: (newVertexPlacementChaosFactor: number) => void,
 }

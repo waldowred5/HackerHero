@@ -1,23 +1,22 @@
 import { NetworkOrb } from '../../atoms/networkOrb/NetworkOrb';
 import { EdgeCollection } from '../../molecules/edgeCollection/EdgeCollection';
 import { VertexCollection } from '../../molecules/vertexCollection/VertexCollection';
-import { HackBotCollection } from '../../molecules/hackBotCollection/HackBotCollection';
 import { EdgeNeighbours } from '@/store/relation/types';
-import { PLAYER_COLOR } from '@/store/player/types';
-import { HackBot, HackBotProps } from '@/store/hackBot/types';
-import { Vertex } from '@/store/vertex/types';
+import { PLAYER, PLAYER_COLOR } from '@/store/player/types';
+import { HackBotMap } from '@/store/hackBot/types';
+import { VertexMap } from '@/store/vertex/types';
 
 interface Props {
   edgeNeighbours: EdgeNeighbours,
   playerColors: PLAYER_COLOR,
-  hackBots: HackBot[],
-  createHackBot: ({ vertex }: HackBotProps) => void,
-  deleteHackBot: (uuid: string) => void,
+  hackBots: HackBotMap,
+  handleHackBotCreation: (vertexId: string, player: PLAYER) => void,
+  handleHackBotDeletion: (vertexId: string) => void,
   orbOpacity: number,
   orbRadius: number,
   updateOrbOpacity: (value: number) => void,
   updateOrbRadius: (value: number) => void,
-  vertices: Vertex[],
+  vertices: VertexMap,
 }
 
 export const NetworkModel = (
@@ -25,8 +24,8 @@ export const NetworkModel = (
     edgeNeighbours,
     playerColors,
     hackBots,
-    createHackBot,
-    deleteHackBot,
+    handleHackBotCreation,
+    handleHackBotDeletion,
     orbOpacity,
     updateOrbOpacity,
     orbRadius,
@@ -43,18 +42,16 @@ export const NetworkModel = (
       />
 
       <VertexCollection
-        createHackBot={createHackBot}
-        deleteHackBot={deleteHackBot}
+        handleHackBotCreation={handleHackBotCreation}
+        handleHackBotDeletion={handleHackBotDeletion}
+        hackBots={hackBots}
         vertices={vertices}
       />
 
       <EdgeCollection
         edgeNeighbours={edgeNeighbours}
         playerColors={playerColors}
-      />
-
-      <HackBotCollection
-        hackBots={hackBots}
+        vertices={vertices}
       />
     </>
   );
