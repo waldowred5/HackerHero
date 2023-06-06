@@ -15,6 +15,8 @@ import useHackBotState from '@/store/hackBot/useHackBotState';
 import useNetworkState from '@/store/network/useNetworkState';
 import useVertexState from '@/store/vertex/useVertexState';
 import { shallow } from 'zustand/shallow';
+import { PLAYER } from '@/store/player/types';
+import { HACK_BOT_CLASS_LIST } from '@/store/hackBot/types';
 
 export const NetworkController = () => {
   const body = useRef<RapierRigidBody | null>(null);
@@ -32,13 +34,13 @@ export const NetworkController = () => {
 
   const {
     hackBots,
-    createHackBot,
-    deleteHackBot,
+    updateSelectedHackBotBlueprint
   } = useHackBotState((state) => {
     return {
       hackBots: state.hackBots,
       createHackBot: state.createHackBot,
       deleteHackBot: state.deleteHackBot,
+      updateSelectedHackBotBlueprint: state.updateSelectedHackBotBlueprint,
     };
   }, shallow);
 
@@ -74,9 +76,11 @@ export const NetworkController = () => {
 
   const {
     playerColors,
+    updateSelectedPlayer,
   } = usePlayerState((state) => {
     return {
       playerColors: state.playerColors,
+      updateSelectedPlayer: state.updateSelectedPlayer,
     };
   }, shallow);
 
@@ -141,10 +145,12 @@ export const NetworkController = () => {
       abortController.signal,
       () => Object
         .values(RESOURCE)
-        .forEach((resource) =>
-          resourcesPerSecond[resource]
-          && updateResource(RESOURCE[resource], resourcesPerSecond[resource])
-        )
+        .forEach((resource) => {
+          resourcesPerSecond[PLAYER.PLAYER_1][resource]
+          && updateResource(RESOURCE[resource], PLAYER.PLAYER_1, resourcesPerSecond[PLAYER.PLAYER_1][resource]);
+          resourcesPerSecond[PLAYER.PLAYER_2][resource]
+          && updateResource(RESOURCE[resource], PLAYER.PLAYER_2, resourcesPerSecond[PLAYER.PLAYER_2][resource]);
+        })
     );
     return () => abortController.abort();
   }, [resourcesPerSecond]);
@@ -172,7 +178,7 @@ export const NetworkController = () => {
     vertexNumber: {
       value: vertexNumber,
       min: 0,
-      max: 100,
+      max: 250,
       step: 1,
       onChange: (value: number) => {
         updateVertexNumber(value);
@@ -214,9 +220,43 @@ export const NetworkController = () => {
     body.current?.applyTorqueImpulse(torque, true);
   });
 
+  // Toggle Player
+  useFrame(() => {
+    const { digitOne, digitTwo } = getKeys();
+
+    if (digitOne) {
+      updateSelectedPlayer(PLAYER.PLAYER_1);
+    }
+
+    if (digitTwo) {
+      updateSelectedPlayer(PLAYER.PLAYER_2);
+    }
+  });
+
+  // Cycle HackBot Blueprint
+  useFrame(() => {
+    const { cycleLeft, cycleRight } = getKeys();
+
+    // TODO: Update this to cycle instead of select
+    if (cycleLeft) {
+      updateSelectedHackBotBlueprint(HACK_BOT_CLASS_LIST.GENERATE_HACKING_POWER);
+    }
+
+    if (cycleRight) {
+      updateSelectedHackBotBlueprint(HACK_BOT_CLASS_LIST.FLOOD_HACK);
+    }
+  });
+
+  // TODO: Set minDistance/maxDistance dynamically based on network radius size
   return (
     <Suspense fallback={null}>
-      <OrbitControls />
+      <OrbitControls
+        enablePan={false}
+        enableRotate={false}
+        enableZoom={true}
+        minDistance={4}
+        maxDistance={6}
+      />
       <Physics gravity={[0, 10, 0]}>
         <RigidBody
           ref={body}
@@ -229,13 +269,13 @@ export const NetworkController = () => {
         >
           <NetworkModel
             edgeNeighbours={edgeNeighbours}
-            playerColors={playerColors}
             hackBots={hackBots}
             handleHackBotCreation={handleHackBotCreation}
             handleHackBotDeletion={handleHackBotDeletion}
             maxEdgeLengthPercentage={maxEdgeLengthPercentage}
             orbOpacity={orbOpacity}
             orbRadius={orbRadius}
+            playerColors={playerColors}
             radius={radius}
             updateOrbOpacity={updateOrbOpacity}
             updateOrbRadius={updateOrbRadius}

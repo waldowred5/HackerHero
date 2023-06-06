@@ -1,5 +1,9 @@
 import styled from 'styled-components';
 
+type ElementProps = {
+  $color: string;
+}
+
 export const ResourcePanelWrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -8,7 +12,7 @@ export const ResourcePanelWrapper = styled.div`
   top: 0;
   left: 0;
   width: 300px;
-  color: #ffffff;
+  color: ${({ $color }: ElementProps) => $color};
   padding: 36px;
   text-align: center;
 `;
@@ -37,9 +41,8 @@ export const ResourceHeading = styled.h1`
   font-size: 48px;
   align-self: center;
   justify-content: center;
-  font-style: italic;
   font-weight: 800;
-  letter-spacing: 2px;
+  letter-spacing: 4px;
 `;
 
 export const ResourceGenerationHeading = styled.h3`
@@ -47,8 +50,7 @@ export const ResourceGenerationHeading = styled.h3`
   line-height: 36px;
   align-self: flex-end;
   justify-content: center;
-  font-style: italic;
   font-weight: 600;
-  letter-spacing: 2px;
+  letter-spacing: 4px;
   color: #96ff8e;
 `;

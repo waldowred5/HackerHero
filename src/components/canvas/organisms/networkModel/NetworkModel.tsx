@@ -1,8 +1,9 @@
+import { Suspense, useEffect } from 'react';
 import { NetworkOrb } from '../../atoms/networkOrb/NetworkOrb';
 import { EdgeCollection } from '../../molecules/edgeCollection/EdgeCollection';
 import { VertexCollection } from '../../molecules/vertexCollection/VertexCollection';
 import { EdgeNeighbours } from '@/store/relation/types';
-import { PLAYER, PLAYER_COLOR } from '@/store/player/types';
+import { PLAYER_COLOR } from '@/store/player/types';
 import { HackBotMap } from '@/store/hackBot/types';
 import { VertexMap } from '@/store/vertex/types';
 
@@ -10,7 +11,7 @@ interface Props {
   edgeNeighbours: EdgeNeighbours,
   playerColors: PLAYER_COLOR,
   hackBots: HackBotMap,
-  handleHackBotCreation: (vertexId: string, player: PLAYER) => void,
+  handleHackBotCreation: (vertexId: string) => void,
   handleHackBotDeletion: (vertexId: string) => void,
   orbOpacity: number,
   orbRadius: number,
@@ -32,6 +33,10 @@ export const NetworkModel = (
     updateOrbRadius,
     vertices,
   }: Props) => {
+  useEffect(() => {
+    console.log({ edgeNeighbours, playerColors, vertices });
+  }, []);
+
   return (
     <>
       <NetworkOrb
@@ -42,17 +47,20 @@ export const NetworkModel = (
       />
 
       <VertexCollection
+        hackBots={hackBots}
         handleHackBotCreation={handleHackBotCreation}
         handleHackBotDeletion={handleHackBotDeletion}
-        hackBots={hackBots}
-        vertices={vertices}
-      />
-
-      <EdgeCollection
-        edgeNeighbours={edgeNeighbours}
         playerColors={playerColors}
         vertices={vertices}
       />
+
+      <Suspense fallback={null}>
+        <EdgeCollection
+          edgeNeighbours={edgeNeighbours}
+          playerColors={playerColors}
+          vertices={vertices}
+        />
+      </Suspense>
     </>
   );
 };

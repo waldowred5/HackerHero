@@ -6,41 +6,37 @@ import { TimePanel } from '../timePanel/TimePanel';
 import useResourceState from '@/store/resource/useResourceState';
 import useSceneState from '@/store/scene/useSceneState';
 import { SCENE } from '@/store/scene/types';
+import { HackBotSelectPanel } from '@/components/ui/hackBotSelectPanel/HackBotSelectPanel';
+import useHackBotState from '@/store/hackBot/useHackBotState';
+import { shallow } from 'zustand/shallow';
+import usePlayerState from '@/store/player/usePlayerState';
 
 export const InterfaceManager = () => {
-  const { scene } = useSceneState();
-  const { resources, resourcesPerSecond } = useResourceState();
-  // Debug
-  // useControls('StatsBar', {
-  //   finance: folder({
-  //     balanceDebug: folder({
-  //       'reset balance': button(() => {
-  //         setBalance(0);
-  //       }),
-  //       '+100k': button(() => {
-  //         updateBalance(100000);
-  //       }),
-  //     }),
-  //     incomeDebug: folder({
-  //       'reset income': button(() => {
-  //         setIncome(0);
-  //       }),
-  //       '+1K': button(() => {
-  //         updateIncome(1000);
-  //       }),
-  //     }),
-  //   }),
-  //   ships: folder({
-  //     removeShip: button(() => {
-  //       deleteShip(0);
-  //     }),
-  //   }),
-  //   crew: folder({
-  //     removeCrewMember: button(() => {
-  //       deleteCrewMember(0);
-  //     }),
-  //   })
-  // });
+  const { scene } = useSceneState((state) => {
+    return {
+      scene: state.scene,
+    };
+  }, shallow);
+
+  const { resources, resourcesPerSecond } = useResourceState((state) => {
+    return {
+      resources: state.resources,
+      resourcesPerSecond: state.resourcesPerSecond,
+    };
+  }, shallow);
+
+  const { selectedHackBotBlueprint, updateSelectedHackBotBlueprint } = useHackBotState((state) => {
+    return {
+      selectedHackBotBlueprint: state.selectedHackBotBlueprint,
+      updateSelectedHackBotBlueprint: state.updateSelectedHackBotBlueprint,
+    };
+  }, shallow);
+
+  const { selectedPlayer } = usePlayerState((state) => {
+    return {
+      selectedPlayer: state.selectedPlayer,
+    };
+  }, shallow);
 
   return (
     <InterfaceWrapper>
@@ -50,6 +46,11 @@ export const InterfaceManager = () => {
           <ResourcePanel
             resources={resources}
             resourcesPerSecond={resourcesPerSecond}
+            selectedPlayer={selectedPlayer}
+          />
+          <HackBotSelectPanel
+            selectedHackBotBlueprint={selectedHackBotBlueprint}
+            updateSelectedHackBotBlueprint={updateSelectedHackBotBlueprint}
           />
           <TimePanel/>
         </>

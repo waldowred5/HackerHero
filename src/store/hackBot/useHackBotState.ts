@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { HACK_BOT_CLASS, HackBot, HackBotState } from '@/store/hackBot/types';
+import { HACK_BOT_CLASS_LIST, HACK_BOT_CLASS_LIST_MAP, HackBot, HackBotState } from '@/store/hackBot/types';
 import { RESOURCE } from '@/store/resource/types';
 import { PLAYER } from '@/store/player/types';
 import useResourceState from '@/store/resource/useResourceState';
@@ -7,18 +7,13 @@ import useResourceState from '@/store/resource/useResourceState';
 export default create<HackBotState>((set, get) => {
   return {
     hackBots: {},
-    selectedHackBotBlueprint: {
-      botClass: HACK_BOT_CLASS.GENERATE_HACKING_POWER,
-      resourceCost: 100,
-      resourceRequirement: RESOURCE.HACKING_POWER,
-      resourcesPerSecond: 2,
-      resourcesPerSecondType: RESOURCE.HACKING_POWER,
-    }, // TODO: Replace this with string access from hackBotBlueprints map?
+    hackBotBlueprints: HACK_BOT_CLASS_LIST_MAP,
+    selectedHackBotBlueprint: HACK_BOT_CLASS_LIST.GENERATE_HACKING_POWER,
 
     // Actions
     createHackBot: (uuid: string, player: PLAYER) => {
       const newHackBot: HackBot = {
-        ...get().selectedHackBotBlueprint,
+        ...get().hackBotBlueprints[get().selectedHackBotBlueprint],
         owner: player,
         uuid,
       };
@@ -28,15 +23,15 @@ export default create<HackBotState>((set, get) => {
         return {
           hackBots: {
             ...state.hackBots,
-            newHackBot,
+            [uuid]: {
+              ...newHackBot,
+            }
           },
         };
       });
     },
 
     deleteHackBot: (uuid: string) => {
-      useResourceState.getState().updateResourcesPerSecond(RESOURCE.HACKING_POWER, -2);
-
       set((state) => {
         const hackBots =
           Object.keys(state.hackBots)
@@ -58,5 +53,11 @@ export default create<HackBotState>((set, get) => {
         hackBots: {},
       });
     },
+
+    updateSelectedHackBotBlueprint: (hackBotBlueprint: string) => {
+      set({
+        selectedHackBotBlueprint: hackBotBlueprint,
+      });
+    }
   };
 });

@@ -4,16 +4,17 @@ import { Group, Mesh } from 'three';
 import { Text } from '@react-three/drei';
 import { ThreeEvent, useFrame } from '@react-three/fiber';
 import { Vertex } from '@/store/vertex/types';
-import { PLAYER } from '@/store/player/types';
+import { PLAYER, PLAYER_COLOR } from '@/store/player/types';
 
 interface Props {
-  handleHackBotCreation: (vertexId: string, player: PLAYER) => void,
+  handleHackBotCreation: (vertexId: string) => void,
   handleHackBotDeletion: (vertexId: string) => void,
+  playerColors: PLAYER_COLOR,
   vertex: Vertex,
   uuid: string,
 }
 
-export const VertexModel = ({ handleHackBotCreation, handleHackBotDeletion, vertex, uuid }: Props) => {
+export const VertexModel = ({ handleHackBotCreation, handleHackBotDeletion, playerColors, vertex, uuid }: Props) => {
   const ref = useRef<Mesh | null>(null);
   const textRef = useRef<Group | null>(null);
   const { owner } = vertex;
@@ -28,7 +29,7 @@ export const VertexModel = ({ handleHackBotCreation, handleHackBotDeletion, vert
   // TODO: Use raycaster and test for first intersection with a
   //  vertex to prevent placing / removing 2 HackBots at once
   const leftClickHandler = () => {
-    handleHackBotCreation(vertex.uuid, PLAYER.PLAYER_1);
+    handleHackBotCreation(vertex.uuid);
   };
 
   const rightClickHandler = () => {
@@ -41,9 +42,14 @@ export const VertexModel = ({ handleHackBotCreation, handleHackBotDeletion, vert
     handleHackBotDeletion(vertex.uuid);
   };
 
-  const changeVertexColor = (event: ThreeEvent<PointerEvent>, color: string) => {
+  const changeVertexColorOnEnter = (event: ThreeEvent<PointerEvent>, player: keyof typeof PLAYER) => {
     // @ts-ignore
-    event.eventObject.material.color = new THREE.Color(color);
+    event.eventObject.material.color = new THREE.Color(playerColors[player].hackBot); // TODO: Object key access
+  };
+
+  const changeVertexColorOnLeave = (event: ThreeEvent<PointerEvent>, player: keyof typeof PLAYER) => {
+    // @ts-ignore
+    event.eventObject.material.color = new THREE.Color(playerColors[player].vertex); // TODO: Object key access
   };
 
   return (
@@ -55,24 +61,24 @@ export const VertexModel = ({ handleHackBotCreation, handleHackBotDeletion, vert
             position={vertex.vector}
             onClick={() => leftClickHandler()}
             onContextMenu={() => rightClickHandler()}
-            onPointerEnter={(event) => changeVertexColor(event, owner === PLAYER.PLAYER_1 ? 'cyan' : 'white')}
-            onPointerLeave={(event) => changeVertexColor(event, owner === PLAYER.PLAYER_1 ? 'blue' : 'grey')}
+            onPointerEnter={(event) => changeVertexColorOnEnter(event, owner)}
+            onPointerLeave={(event) => changeVertexColorOnLeave(event, owner)}
           >
-            <sphereGeometry args={[0.12, 32, 32]}/>
+            <sphereGeometry args={[0.06, 32, 32]}/>
             <meshBasicMaterial
-              color={owner === PLAYER.PLAYER_1 ? 'blue' : 'grey'}
+              color={playerColors[PLAYER[owner]].vertex}
             />
           </mesh>
           <group
             ref={textRef}
             position={[
-              vertex.vector.x * 1.15,
-              vertex.vector.y * 1.15,
-              vertex.vector.z * 1.15,
+              vertex.vector.x / 1.08,
+              vertex.vector.y / 1.08,
+              vertex.vector.z / 1.08,
             ]}>
             <Text
               font="./fonts/bangers-v20-latin-regular.woff"
-              fontSize={0.1}
+              fontSize={0.06}
             >
               {uuid.substring(0, 4)}
             </Text>

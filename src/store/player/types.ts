@@ -5,9 +5,17 @@ export enum PLAYER {
 }
 
 export type PLAYER_COLOR = {
-  [key: string]: string,
+  [key: string]: {
+    edge: string,
+    hackBot: string,
+    vertex: string,
+  },
 }
 
 export interface PlayerState {
   playerColors: PLAYER_COLOR,
+  selectedPlayer: keyof typeof PLAYER,
+
+  // Actions
+  updateSelectedPlayer: (player: keyof typeof PLAYER) => void,
 }
