@@ -7,7 +7,12 @@ import useHackBotState from '@/store/hackBot/useHackBotState';
 
 export default create<NetworkState>((set, get) => {
   return {
-    orbOpacity: 0.96,
+    orbColor: {
+      red: 0.0,
+      green: 0.0,
+      blue: 0.0,
+    },
+    orbOpacity: 0.99,
     orbRadius: 1.8,
     radius: 2,
 
@@ -30,6 +35,17 @@ export default create<NetworkState>((set, get) => {
       useHackBotState.getState().resetHackBots();
     },
 
+    updateOrbColor: (channel: string, newColor: number) => {
+      set((state) => {
+        return {
+          orbColor: {
+            ...state.orbColor,
+            [channel]: newColor,
+          },
+        };
+      });
+    },
+
     updateOrbOpacity: (newOpacity: number) => {
       set(() => {
         return {
@@ -44,6 +60,6 @@ export default create<NetworkState>((set, get) => {
           orbRadius: newRadius,
         };
       });
-    },
+    }
   };
 });

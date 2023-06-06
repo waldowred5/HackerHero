@@ -39,19 +39,23 @@ export const Edge = (
   cylinderGeom.rotateX(Math.PI / 2);
 
   const getColor = (player: PLAYER) => {
-    return new THREE.Color(playerColors[player]['edge']); // TODO: Object key access
+    // TODO: Object key access
+    // TODO: Clean this up
+    return new THREE.Vector3(
+      playerColors[player]['edge'][0],
+      playerColors[player]['edge'][1],
+      playerColors[player]['edge'][2],
+    );
   };
 
   const cylinderMaterial = new THREE.ShaderMaterial({
     vertexShader,
     fragmentShader,
+    // toneMapped: false,
     uniforms: {
       uCylinderColorBase: { value: getColor(PLAYER.NEUTRAL) },
       uCylinderColorFromVertex: { value: getColor(PLAYER[fromVertex.owner]) },
       uCylinderColorToVertex: { value: getColor(PLAYER[toVertex.owner]) },
-      // uCylinderColorBase: { value: new THREE.Color('lightgrey') },
-      // uCylinderColorFromVertex: { value: new THREE.Color('blue') },
-      // uCylinderColorToVertex: { value: new THREE.Color('red') },
       uCylinderDistance: { value: distance },
       uFromVertexOwnershipPercentage: { value: fromVertexOwnershipPercentage },
       uToVertexOwnershipPercentage: { value: toVertexOwnershipPercentage },

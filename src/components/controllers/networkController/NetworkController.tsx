@@ -34,14 +34,12 @@ export const NetworkController = () => {
 
   const {
     hackBots,
-    selectedHackBotBlueprint,
     updateSelectedHackBotBlueprint
   } = useHackBotState((state) => {
     return {
       hackBots: state.hackBots,
       createHackBot: state.createHackBot,
       deleteHackBot: state.deleteHackBot,
-      selectedHackBotBlueprint: state.selectedHackBotBlueprint,
       updateSelectedHackBotBlueprint: state.updateSelectedHackBotBlueprint,
     };
   }, shallow);
@@ -59,18 +57,22 @@ export const NetworkController = () => {
   }, shallow);
 
   const {
+    orbColor,
     orbOpacity,
     orbRadius,
     radius,
     createNetwork,
+    updateOrbColor,
     updateOrbOpacity,
     updateOrbRadius,
   } = useNetworkState((state) => {
     return {
+      orbColor: state.orbColor,
       orbOpacity: state.orbOpacity,
       orbRadius: state.orbRadius,
       radius: state.radius,
       createNetwork: state.createNetwork,
+      updateOrbColor: state.updateOrbColor,
       updateOrbOpacity: state.updateOrbOpacity,
       updateOrbRadius: state.updateOrbRadius,
     };
@@ -218,7 +220,7 @@ export const NetworkController = () => {
     const { upward, downward, leftward, rightward } = getKeys();
 
     const torque = { x: 0, y: 0, z: 0 };
-    const torqueStrength = 4000 * delta;
+    const torqueStrength = 3000 * delta;
 
     if (upward) {
       torque.x += torqueStrength;
@@ -286,6 +288,7 @@ export const NetworkController = () => {
           angularDamping={8}
         >
           <NetworkModel
+            orbColor={orbColor}
             edgeNeighbours={edgeNeighbours}
             hackBots={hackBots}
             handleHackBotCreation={handleHackBotCreation}
@@ -295,6 +298,7 @@ export const NetworkController = () => {
             orbRadius={orbRadius}
             playerColors={playerColors}
             radius={radius}
+            updateOrbColor={updateOrbColor}
             updateOrbOpacity={updateOrbOpacity}
             updateOrbRadius={updateOrbRadius}
             vertices={vertices}

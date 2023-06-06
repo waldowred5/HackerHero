@@ -5,12 +5,13 @@ import { Match } from '@/components/canvas/scenes/match/Match';
 import { SceneLights } from '@/components/canvas/organisms/sceneLights/SceneLights';
 import { useControls } from 'leva';
 import { GameOver } from '@/components/canvas/scenes/gameOver/GameOver';
+import { FX } from '@/components/canvas/organisms/fx/FX';
 import { SCENE } from '@/store/scene/types';
 
 export const SceneManager = () => {
   const { scene, updateScene } = useScene();
 
-  const gameScreenComponents: { [index: string]: any } = {
+  const gameScreenComponents: { [key: string]: any } = {
     [SCENE.GAME_OVER]: GameOver,
     [SCENE.LOADING]: Loading,
     [SCENE.MAIN_MENU]: MainMenu,
@@ -29,6 +30,8 @@ export const SceneManager = () => {
   });
 
   return <>
+    <color args={['#000000']} attach="background" />
+    <FX/>
     <SceneLights/>
     <Component/>
   </>;

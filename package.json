@@ -21,6 +21,7 @@
   "dependencies": {
     "@react-three/drei": "^9.68.3",
     "@react-three/fiber": "^8.13.0",
+    "@react-three/postprocessing": "^2.14.9",
     "@react-three/rapier": "^1.0.0",
     "@types/three": "^0.152.0",
     "@typescript-eslint/eslint-plugin": "^5.59.6",

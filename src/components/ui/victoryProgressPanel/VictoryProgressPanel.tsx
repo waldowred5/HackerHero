@@ -11,6 +11,7 @@ interface Props {
   vertices: VertexMap;
 }
 
+// TODO: Upgrade to include contest progress for finer granularity
 export const VictoryProgressPanel = ({ vertices }: Props) => {
   const [playerVictoryProgress, setPlayerVictoryProgress] = useState(0);
   const [opponentVictoryProgress, setOpponentVictoryProgress] = useState(0);

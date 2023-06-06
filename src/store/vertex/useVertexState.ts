@@ -121,7 +121,7 @@ export default create<VertexState>((set, get) => {
       const hackBotResourcesPerSecondType = hackBot.resourcesPerSecondType;
       const hackBotResourcesPerSecond = hackBot.resourcesPerSecond;
 
-      useResourceState.getState().updateResourcesPerSecond(RESOURCE[hackBotResourcesPerSecondType], -hackBotResourcesPerSecond);
+      useResourceState.getState().updateResourcesPerSecond(RESOURCE[hackBotResourcesPerSecondType], PLAYER[usePlayerState.getState().selectedPlayer], -hackBotResourcesPerSecond);
 
       useHackBotState.getState().deleteHackBot(hackBotId);
 
