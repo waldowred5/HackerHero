@@ -1,4 +1,4 @@
-import { Suspense, useEffect } from 'react';
+import { Suspense } from 'react';
 import { NetworkOrb } from '../../atoms/networkOrb/NetworkOrb';
 import { EdgeCollection } from '../../molecules/edgeCollection/EdgeCollection';
 import { VertexCollection } from '../../molecules/vertexCollection/VertexCollection';
@@ -41,10 +41,6 @@ export const NetworkModel = (
     updateOrbRadius,
     vertices,
   }: Props) => {
-  useEffect(() => {
-    console.log({ edgeNeighbours, playerColors, vertices });
-  }, []);
-
   return (
     <>
       <NetworkOrb

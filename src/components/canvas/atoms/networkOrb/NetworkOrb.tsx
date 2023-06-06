@@ -38,7 +38,7 @@ export const NetworkOrb = ({ orbColor, orbOpacity, orbRadius, updateOrbColor, up
     },
     color: folder({
       red: {
-        value: 0.5,
+        value: 0.0,
         min: 0,
         max: 25,
         onChange: (value: number) => {
@@ -46,7 +46,7 @@ export const NetworkOrb = ({ orbColor, orbOpacity, orbRadius, updateOrbColor, up
         }
       },
       green: {
-        value: 0.5,
+        value: 0.0,
         min: 0,
         max: 25,
         onChange: (value: number) => {
@@ -54,7 +54,7 @@ export const NetworkOrb = ({ orbColor, orbOpacity, orbRadius, updateOrbColor, up
         }
       },
       blue: {
-        value: 0.5,
+        value: 0.0,
         min: 0,
         max: 25,
         onChange: (value: number) => {
@@ -66,9 +66,7 @@ export const NetworkOrb = ({ orbColor, orbOpacity, orbRadius, updateOrbColor, up
 
   return (
     <group ref={ref}>
-      <mesh
-        castShadow={true}
-      >
+      <mesh>
         <sphereGeometry args={[orbRadius, 32, 32]}/>
         <meshStandardMaterial
           color={[orbColor.red, orbColor.green, orbColor.blue]}

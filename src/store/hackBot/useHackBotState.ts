@@ -1,8 +1,6 @@
 import { create } from 'zustand';
 import { HACK_BOT_CLASS_LIST, HACK_BOT_CLASS_LIST_MAP, HackBot, HackBotState } from '@/store/hackBot/types';
-import { RESOURCE } from '@/store/resource/types';
 import { PLAYER } from '@/store/player/types';
-import useResourceState from '@/store/resource/useResourceState';
 
 export default create<HackBotState>((set, get) => {
   return {

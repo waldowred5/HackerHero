@@ -30,7 +30,7 @@ export const SceneManager = () => {
   });
 
   return <>
-    <color args={['#000000']} attach="background" />
+    <color args={['#000000']} attach="background"/>
     <FX/>
     <SceneLights/>
     <Component/>
