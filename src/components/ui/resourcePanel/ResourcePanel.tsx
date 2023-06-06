@@ -8,21 +8,41 @@ import {
 } from './styles';
 import { FaLaptopCode, HiChip } from 'react-icons/all';
 import { RESOURCE } from '@/store/resource/types';
+import { PLAYER } from '@/store/player/types';
 
 interface Props {
   resources: {
-    [key: string]: number,
-    [key: string]: number,
+    [key: string]: {
+      [key: string]: number,
+      [key: string]: number,
+      [key: string]: number,
+    },
+    [key: string]: {
+      [key: string]: number,
+      [key: string]: number,
+      [key: string]: number,
+    },
   };
   resourcesPerSecond: {
-    [key: string]: number,
-    [key: string]: number,
-  }
+    [key: string]: {
+      [key: string]: number,
+      [key: string]: number,
+      [key: string]: number,
+    },
+    [key: string]: {
+      [key: string]: number,
+      [key: string]: number,
+      [key: string]: number,
+    },
+  },
+  selectedPlayer: PLAYER;
 }
 
-export const ResourcePanel = ({ resources, resourcesPerSecond }: Props) => {
+export const ResourcePanel = ({ resources, resourcesPerSecond, selectedPlayer }: Props) => {
   return (
-    <ResourcePanelWrapper>
+    <ResourcePanelWrapper
+      $color={selectedPlayer === PLAYER.PLAYER_1 ? 'cyan' : 'orange'}
+    >
       <PrimaryRowWrapper>
         <IconWrapper
           color={'#00ff00'}
@@ -31,10 +51,10 @@ export const ResourcePanel = ({ resources, resourcesPerSecond }: Props) => {
         </IconWrapper>
         <SecondaryRowWrapper>
           <ResourceHeading>
-            { resources[RESOURCE.HACKING_POWER] }
+            { resources[PLAYER[selectedPlayer]][RESOURCE.HACKING_POWER] }
           </ResourceHeading>
           <ResourceGenerationHeading>
-            +{ resourcesPerSecond[RESOURCE.HACKING_POWER] }/sec
+            +{ resourcesPerSecond[PLAYER[selectedPlayer]][RESOURCE.HACKING_POWER] }/sec
           </ResourceGenerationHeading>
         </SecondaryRowWrapper>
       </PrimaryRowWrapper>
@@ -46,10 +66,10 @@ export const ResourcePanel = ({ resources, resourcesPerSecond }: Props) => {
         </IconWrapper>
         <SecondaryRowWrapper>
           <ResourceHeading>
-            { resources[RESOURCE.COMPUTE_POWER] }
+            { resources[PLAYER[selectedPlayer]][RESOURCE.COMPUTE_POWER] }
           </ResourceHeading>
           <ResourceGenerationHeading>
-            +{ resourcesPerSecond[RESOURCE.COMPUTE_POWER] }/sec
+            +{ resourcesPerSecond[PLAYER[selectedPlayer]][RESOURCE.COMPUTE_POWER] }/sec
           </ResourceGenerationHeading>
         </SecondaryRowWrapper>
       </PrimaryRowWrapper>

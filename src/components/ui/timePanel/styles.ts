@@ -15,7 +15,6 @@ export const TimeHeading = styled.h1`
   font-size: 72px;
   align-self: center;
   justify-content: center;
-  font-style: italic;
   font-weight: 800;
   letter-spacing: 2px;
 `;

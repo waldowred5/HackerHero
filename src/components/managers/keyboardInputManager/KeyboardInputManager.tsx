@@ -19,6 +19,10 @@ export const KeyboardInputManager = ({ children }: Props) => {
         { name: 'downward', keys: ['ArrowDown', 'KeyS'] },
         { name: 'leftward', keys: ['ArrowLeft', 'KeyA'] },
         { name: 'rightward', keys: ['ArrowRight', 'KeyD'] },
+        { name: 'cycleLeft', keys: ['KeyQ'] },
+        { name: 'cycleRight', keys: ['KeyE'] },
+        { name: 'digitOne', keys: ['Digit1'] },
+        { name: 'digitTwo', keys: ['Digit2'] },
       ]}
     >
       { children }

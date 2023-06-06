@@ -20,7 +20,7 @@ export const Edge = (
     toVertexOwnershipPercentage,
     playerColors
   }: Props) => {
-  const cylinderRadius = 0.02;
+  const cylinderRadius = 0.01;
   const cylinderTesselation = {
     radial: 16,
     length: 32,
@@ -39,7 +39,7 @@ export const Edge = (
   cylinderGeom.rotateX(Math.PI / 2);
 
   const getColor = (player: PLAYER) => {
-    return new THREE.Color(playerColors[player]);
+    return new THREE.Color(playerColors[player]['edge']); // TODO: Object key access
   };
 
   const cylinderMaterial = new THREE.ShaderMaterial({

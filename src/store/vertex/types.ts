@@ -31,7 +31,7 @@ export interface VertexState {
       vertexNumber,
     }: GenerateVerticesProps
   ) => void,
-  handleHackBotCreation: (vertexId: string, player: PLAYER) => void,
+  handleHackBotCreation: (vertexId: string) => void,
   handleHackBotDeletion: (vertexId: string) => void,
   updateVertexNumber: (newVertexNumber: number) => void,
   updateVertexOwner: (vertexId: string, newVertexOwner: keyof typeof PLAYER) => void,

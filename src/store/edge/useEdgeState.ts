@@ -3,7 +3,7 @@ import { EdgeState } from '@/store/edge/types';
 
 export default create<EdgeState>((set) => {
   return {
-    maxEdgeLengthPercentage: 0.97,
+    maxEdgeLengthPercentage: 0.55,
 
     // Actions
     updateMaxEdgeLengthPercentage: (newMaxEdgeLengthPercentage: number) => {

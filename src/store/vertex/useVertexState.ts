@@ -4,13 +4,13 @@ import { v4 as uuidv4 } from 'uuid';
 import { VertexMap, VertexState } from './types';
 import { PLAYER } from '@/store/player/types';
 import useHackBotState from '@/store/hackBot/useHackBotState';
-import { HACK_BOT_CLASS, HackBot } from '@/store/hackBot/types';
 import { RESOURCE } from '@/store/resource/types';
 import useResourceState from '@/store/resource/useResourceState';
+import usePlayerState from '@/store/player/usePlayerState';
 
 export default create<VertexState>((set, get) => {
   return {
-    vertexNumber: 14,
+    vertexNumber: 60,
     vertexPlacementChaosFactor: 350,
     vertices: {},
 
@@ -64,7 +64,7 @@ export default create<VertexState>((set, get) => {
       });
     },
 
-    handleHackBotCreation: (vertexId: string, player: PLAYER) => {
+    handleHackBotCreation: (vertexId: string) => {
       if (get().vertices[vertexId].hackBotId) {
         console.log('A HackBot already exists on this Vertex');
 
@@ -72,9 +72,9 @@ export default create<VertexState>((set, get) => {
       }
 
       // Check resource cost
-      const selectedHackBotBlueprint = useHackBotState.getState().selectedHackBotBlueprint;
+      const selectedHackBotBlueprint = useHackBotState.getState().hackBotBlueprints[useHackBotState.getState().selectedHackBotBlueprint];
       const canAffordNewHackBot =
-        useResourceState.getState().resources[selectedHackBotBlueprint.resourceRequirement]
+        useResourceState.getState().resources[PLAYER[usePlayerState.getState().selectedPlayer]][selectedHackBotBlueprint.resourceRequirement]
         >= selectedHackBotBlueprint.resourceCost;
 
       if (!canAffordNewHackBot) {
@@ -85,13 +85,14 @@ export default create<VertexState>((set, get) => {
       }
 
       // Pay resource cost
-      useResourceState.getState().updateResource(RESOURCE[selectedHackBotBlueprint.resourceRequirement], -selectedHackBotBlueprint.resourceCost);
+      useResourceState.getState().updateResource(RESOURCE[selectedHackBotBlueprint.resourceRequirement], PLAYER[usePlayerState.getState().selectedPlayer], -selectedHackBotBlueprint.resourceCost);
       // Update resource generation
-      useResourceState.getState().updateResourcesPerSecond(RESOURCE[selectedHackBotBlueprint.resourcesPerSecondType], selectedHackBotBlueprint.resourcesPerSecond);
+      useResourceState.getState().updateResourcesPerSecond(RESOURCE[selectedHackBotBlueprint.resourcesPerSecondType], PLAYER[usePlayerState.getState().selectedPlayer], selectedHackBotBlueprint.resourcesPerSecond);
 
       const newHackBotUuid = uuidv4();
+      const selectedPlayer = usePlayerState.getState().selectedPlayer;
 
-      useHackBotState.getState().createHackBot(newHackBotUuid, player);
+      useHackBotState.getState().createHackBot(newHackBotUuid, selectedPlayer);
 
       set((state) => {
         return {
@@ -100,7 +101,7 @@ export default create<VertexState>((set, get) => {
             [vertexId]: {
               ...state.vertices[vertexId],
               hackBotId: newHackBotUuid,
-              owner: player,
+              owner: selectedPlayer,
             },
           },
         };
@@ -115,6 +116,12 @@ export default create<VertexState>((set, get) => {
 
         return;
       }
+
+      const hackBot = useHackBotState.getState().hackBots[hackBotId];
+      const hackBotResourcesPerSecondType = hackBot.resourcesPerSecondType;
+      const hackBotResourcesPerSecond = hackBot.resourcesPerSecond;
+
+      useResourceState.getState().updateResourcesPerSecond(RESOURCE[hackBotResourcesPerSecondType], -hackBotResourcesPerSecond);
 
       useHackBotState.getState().deleteHackBot(hackBotId);
 

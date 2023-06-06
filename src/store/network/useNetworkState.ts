@@ -8,7 +8,7 @@ import useHackBotState from '@/store/hackBot/useHackBotState';
 export default create<NetworkState>((set, get) => {
   return {
     orbOpacity: 0.96,
-    orbRadius: 1.6,
+    orbRadius: 1.8,
     radius: 2,
 
     // Actions

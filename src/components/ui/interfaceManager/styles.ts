@@ -9,4 +9,6 @@ export const InterfaceWrapper = styled.div`
   height: 0;
   pointer-events: none;
   color: #ffffff;
+  font-family: Bangers, serif;
+  z-index: 10;
 `;
