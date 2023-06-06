@@ -4,14 +4,14 @@ import { RESOURCE } from '@/store/resource/types';
 // TODO: Come up with more creative names for these
 export enum HACK_BOT_CLASS_LIST {
   GENERATE_HACKING_POWER = 'GENERATE_HACKING_POWER',
-  GENERATE_COMPUTE_POWER = 'GENERATE_COMPUTE_POWER',
+  // GENERATE_COMPUTE_POWER = 'GENERATE_COMPUTE_POWER',
   FLOOD_HACK = 'FLOOD_HACK',
-  DRAIN = 'DRAIN',
-  FIREWALL = 'FIREWALL',
-  SENTRY = 'SENTRY',
-  VIRUS = 'VIRUS',
-  ANTIVIRUS = 'ANTIVIRUS',
-  DDOS = 'DDOS',
+  // DRAIN = 'DRAIN',
+  // FIREWALL = 'FIREWALL',
+  // SENTRY = 'SENTRY',
+  // VIRUS = 'VIRUS',
+  // ANTIVIRUS = 'ANTIVIRUS',
+  // DDOS = 'DDOS',
 }
 
 export interface HackBotBlueprintMap {

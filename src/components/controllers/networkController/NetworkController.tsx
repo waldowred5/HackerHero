@@ -34,12 +34,14 @@ export const NetworkController = () => {
 
   const {
     hackBots,
+    selectedHackBotBlueprint,
     updateSelectedHackBotBlueprint
   } = useHackBotState((state) => {
     return {
       hackBots: state.hackBots,
       createHackBot: state.createHackBot,
       deleteHackBot: state.deleteHackBot,
+      selectedHackBotBlueprint: state.selectedHackBotBlueprint,
       updateSelectedHackBotBlueprint: state.updateSelectedHackBotBlueprint,
     };
   }, shallow);
@@ -87,10 +89,14 @@ export const NetworkController = () => {
   const {
     adjacencyMap,
     edgeNeighbours,
+    contestProgress,
+    updateContestProgress,
   } = useRelationState((state) => {
     return {
       adjacencyMap: state.adjacencyMap,
       edgeNeighbours: state.edgeNeighbours,
+      contestProgress: state.contestProgress,
+      updateContestProgress: state.updateContestProgress,
     };
   }, shallow);
 
@@ -157,6 +163,25 @@ export const NetworkController = () => {
 
   // Debug
   useControls('Network Model', {
+    edge: folder({
+      maxLengthPercentage: {
+        value: maxEdgeLengthPercentage,
+        min: 0,
+        max: 1,
+        onChange: (value: number) => {
+          updateMaxEdgeLengthPercentage(value);
+        }
+      },
+      contestProgress: {
+        value: contestProgress,
+        min: 0,
+        max: 0.5,
+        step: 0.01,
+        onChange: (value: number) => {
+          updateContestProgress(value);
+        }
+      }
+    }),
     match: folder({
       endMatch: button(() => {
         endMatch();
@@ -167,31 +192,25 @@ export const NetworkController = () => {
         startMatch();
       }),
     }),
-    maxEdgeLengthPercentage: {
-      value: maxEdgeLengthPercentage,
-      min: 0,
-      max: 1,
-      onChange: (value: number) => {
-        updateMaxEdgeLengthPercentage(value);
+    vertex: folder({
+      number: {
+        value: vertexNumber,
+        min: 0,
+        max: 250,
+        step: 1,
+        onChange: (value: number) => {
+          updateVertexNumber(value);
+        }
+      },
+      placementChaosFactor: {
+        value: 350,
+        min: 0,
+        max: 1000,
+        onChange: (value: number) => {
+          updateVertexPlacementChaosFactor(value);
+        }
       }
-    },
-    vertexNumber: {
-      value: vertexNumber,
-      min: 0,
-      max: 250,
-      step: 1,
-      onChange: (value: number) => {
-        updateVertexNumber(value);
-      }
-    },
-    vertexPlacementChaosFactor: {
-      value: 350,
-      min: 0,
-      max: 1000,
-      onChange: (value: number) => {
-        updateVertexPlacementChaosFactor(value);
-      }
-    }
+    }),
   });
 
   // Rotate Orb on Keypress
@@ -237,7 +256,6 @@ export const NetworkController = () => {
   useFrame(() => {
     const { cycleLeft, cycleRight } = getKeys();
 
-    // TODO: Update this to cycle instead of select
     if (cycleLeft) {
       updateSelectedHackBotBlueprint(HACK_BOT_CLASS_LIST.GENERATE_HACKING_POWER);
     }

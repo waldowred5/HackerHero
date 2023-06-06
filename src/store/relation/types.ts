@@ -35,7 +35,11 @@ export interface RelationState {
   adjacencyMap: AdjacencyMap,
   edgeNeighbours: EdgeNeighbours,
 
-  // Actions
+  // Debug
+  contestProgress: number,
+  updateContestProgress: (newProgress: number) => void,
+
+    // Actions
   createAdjacencyMap: (
     {
       radius,

@@ -12,3 +12,10 @@ export const InterfaceWrapper = styled.div`
   font-family: Bangers, serif;
   z-index: 10;
 `;
+
+export const HorizontalPin = styled.div`
+  position: fixed;
+  display: flex;
+  justify-content: center;
+  width: 100vw;
+`;
