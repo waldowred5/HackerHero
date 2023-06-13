@@ -51,7 +51,6 @@ export const Edge = (
   const cylinderMaterial = new THREE.ShaderMaterial({
     vertexShader,
     fragmentShader,
-    // toneMapped: false,
     uniforms: {
       uCylinderColorBase: { value: getColor(PLAYER.NEUTRAL) },
       uCylinderColorFromVertex: { value: getColor(PLAYER[fromVertex.owner]) },
