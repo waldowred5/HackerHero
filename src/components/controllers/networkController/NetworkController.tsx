@@ -57,18 +57,22 @@ export const NetworkController = () => {
   }, shallow);
 
   const {
+    orbColor,
     orbOpacity,
     orbRadius,
     radius,
     createNetwork,
+    updateOrbColor,
     updateOrbOpacity,
     updateOrbRadius,
   } = useNetworkState((state) => {
     return {
+      orbColor: state.orbColor,
       orbOpacity: state.orbOpacity,
       orbRadius: state.orbRadius,
       radius: state.radius,
       createNetwork: state.createNetwork,
+      updateOrbColor: state.updateOrbColor,
       updateOrbOpacity: state.updateOrbOpacity,
       updateOrbRadius: state.updateOrbRadius,
     };
@@ -87,10 +91,14 @@ export const NetworkController = () => {
   const {
     adjacencyMap,
     edgeNeighbours,
+    contestProgress,
+    updateContestProgress,
   } = useRelationState((state) => {
     return {
       adjacencyMap: state.adjacencyMap,
       edgeNeighbours: state.edgeNeighbours,
+      contestProgress: state.contestProgress,
+      updateContestProgress: state.updateContestProgress,
     };
   }, shallow);
 
@@ -157,6 +165,25 @@ export const NetworkController = () => {
 
   // Debug
   useControls('Network Model', {
+    edge: folder({
+      maxLengthPercentage: {
+        value: maxEdgeLengthPercentage,
+        min: 0,
+        max: 1,
+        onChange: (value: number) => {
+          updateMaxEdgeLengthPercentage(value);
+        }
+      },
+      contestProgress: {
+        value: contestProgress,
+        min: 0,
+        max: 0.5,
+        step: 0.01,
+        onChange: (value: number) => {
+          updateContestProgress(value);
+        }
+      }
+    }),
     match: folder({
       endMatch: button(() => {
         endMatch();
@@ -167,31 +194,25 @@ export const NetworkController = () => {
         startMatch();
       }),
     }),
-    maxEdgeLengthPercentage: {
-      value: maxEdgeLengthPercentage,
-      min: 0,
-      max: 1,
-      onChange: (value: number) => {
-        updateMaxEdgeLengthPercentage(value);
+    vertex: folder({
+      number: {
+        value: vertexNumber,
+        min: 0,
+        max: 250,
+        step: 1,
+        onChange: (value: number) => {
+          updateVertexNumber(value);
+        }
+      },
+      placementChaosFactor: {
+        value: 350,
+        min: 0,
+        max: 1000,
+        onChange: (value: number) => {
+          updateVertexPlacementChaosFactor(value);
+        }
       }
-    },
-    vertexNumber: {
-      value: vertexNumber,
-      min: 0,
-      max: 250,
-      step: 1,
-      onChange: (value: number) => {
-        updateVertexNumber(value);
-      }
-    },
-    vertexPlacementChaosFactor: {
-      value: 350,
-      min: 0,
-      max: 1000,
-      onChange: (value: number) => {
-        updateVertexPlacementChaosFactor(value);
-      }
-    }
+    }),
   });
 
   // Rotate Orb on Keypress
@@ -199,7 +220,7 @@ export const NetworkController = () => {
     const { upward, downward, leftward, rightward } = getKeys();
 
     const torque = { x: 0, y: 0, z: 0 };
-    const torqueStrength = 4000 * delta;
+    const torqueStrength = 3000 * delta;
 
     if (upward) {
       torque.x += torqueStrength;
@@ -237,7 +258,6 @@ export const NetworkController = () => {
   useFrame(() => {
     const { cycleLeft, cycleRight } = getKeys();
 
-    // TODO: Update this to cycle instead of select
     if (cycleLeft) {
       updateSelectedHackBotBlueprint(HACK_BOT_CLASS_LIST.GENERATE_HACKING_POWER);
     }
@@ -268,6 +288,7 @@ export const NetworkController = () => {
           angularDamping={8}
         >
           <NetworkModel
+            orbColor={orbColor}
             edgeNeighbours={edgeNeighbours}
             hackBots={hackBots}
             handleHackBotCreation={handleHackBotCreation}
@@ -277,6 +298,7 @@ export const NetworkController = () => {
             orbRadius={orbRadius}
             playerColors={playerColors}
             radius={radius}
+            updateOrbColor={updateOrbColor}
             updateOrbOpacity={updateOrbOpacity}
             updateOrbRadius={updateOrbRadius}
             vertices={vertices}

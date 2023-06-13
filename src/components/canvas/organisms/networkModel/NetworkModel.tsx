@@ -1,4 +1,4 @@
-import { Suspense, useEffect } from 'react';
+import { Suspense } from 'react';
 import { NetworkOrb } from '../../atoms/networkOrb/NetworkOrb';
 import { EdgeCollection } from '../../molecules/edgeCollection/EdgeCollection';
 import { VertexCollection } from '../../molecules/vertexCollection/VertexCollection';
@@ -8,6 +8,11 @@ import { HackBotMap } from '@/store/hackBot/types';
 import { VertexMap } from '@/store/vertex/types';
 
 interface Props {
+  orbColor: {
+    red: number,
+    green: number,
+    blue: number,
+  }
   edgeNeighbours: EdgeNeighbours,
   playerColors: PLAYER_COLOR,
   hackBots: HackBotMap,
@@ -15,6 +20,7 @@ interface Props {
   handleHackBotDeletion: (vertexId: string) => void,
   orbOpacity: number,
   orbRadius: number,
+  updateOrbColor: (channel: string, newColor: number) => void,
   updateOrbOpacity: (value: number) => void,
   updateOrbRadius: (value: number) => void,
   vertices: VertexMap,
@@ -22,6 +28,7 @@ interface Props {
 
 export const NetworkModel = (
   {
+    orbColor,
     edgeNeighbours,
     playerColors,
     hackBots,
@@ -30,19 +37,18 @@ export const NetworkModel = (
     orbOpacity,
     updateOrbOpacity,
     orbRadius,
+    updateOrbColor,
     updateOrbRadius,
     vertices,
   }: Props) => {
-  useEffect(() => {
-    console.log({ edgeNeighbours, playerColors, vertices });
-  }, []);
-
   return (
     <>
       <NetworkOrb
+        orbColor={orbColor}
         orbOpacity={orbOpacity}
-        updateOrbOpacity={updateOrbOpacity}
         orbRadius={orbRadius}
+        updateOrbColor={updateOrbColor}
+        updateOrbOpacity={updateOrbOpacity}
         updateOrbRadius={updateOrbRadius}
       />
 

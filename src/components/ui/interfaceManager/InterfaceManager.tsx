@@ -1,15 +1,18 @@
-import {
-  InterfaceWrapper
-} from './styles';
+import { shallow } from 'zustand/shallow';
 import { ResourcePanel } from '../resourcePanel/ResourcePanel';
 import { TimePanel } from '../timePanel/TimePanel';
+import {
+  InterfaceWrapper,
+  HorizontalPin,
+} from './styles';
 import useResourceState from '@/store/resource/useResourceState';
 import useSceneState from '@/store/scene/useSceneState';
-import { SCENE } from '@/store/scene/types';
-import { HackBotSelectPanel } from '@/components/ui/hackBotSelectPanel/HackBotSelectPanel';
 import useHackBotState from '@/store/hackBot/useHackBotState';
-import { shallow } from 'zustand/shallow';
 import usePlayerState from '@/store/player/usePlayerState';
+import useVertexState from '@/store/vertex/useVertexState';
+import { SCENE } from '@/store/scene/types';
+import { VictoryProgressPanel } from '@/components/ui/victoryProgressPanel/VictoryProgressPanel';
+import { HackBotSelectPanel } from '@/components/ui/hackBotSelectPanel/HackBotSelectPanel';
 
 export const InterfaceManager = () => {
   const { scene } = useSceneState((state) => {
@@ -38,6 +41,12 @@ export const InterfaceManager = () => {
     };
   }, shallow);
 
+  const { vertices } = useVertexState((state) => {
+    return {
+      vertices: state.vertices,
+    };
+  }, shallow);
+
   return (
     <InterfaceWrapper>
       {
@@ -53,6 +62,11 @@ export const InterfaceManager = () => {
             updateSelectedHackBotBlueprint={updateSelectedHackBotBlueprint}
           />
           <TimePanel/>
+          <HorizontalPin>
+            <VictoryProgressPanel
+              vertices={vertices}
+            />
+          </HorizontalPin>
         </>
       }
     </InterfaceWrapper>

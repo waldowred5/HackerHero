@@ -3,6 +3,7 @@ import { EdgeNeighbours } from '@/store/relation/types';
 import { PLAYER_COLOR } from '@/store/player/types';
 import { Vertex, VertexMap } from '@/store/vertex/types';
 import { useEffect } from 'react';
+import useRelationState from '@/store/relation/useRelationState';
 
 interface Props {
   edgeNeighbours: EdgeNeighbours;
@@ -11,9 +12,9 @@ interface Props {
 }
 
 export const EdgeCollection = ({ edgeNeighbours, playerColors, vertices }: Props) => {
-  useEffect(() => {
-    console.log('Edge Collection: ', { edgeNeighbours, playerColors, vertices });
-  }, [edgeNeighbours, playerColors, vertices]);
+  const { contestProgress } = useRelationState((state) => ({
+    contestProgress: state.contestProgress,
+  }));
 
   return (
     <group>
@@ -32,9 +33,11 @@ export const EdgeCollection = ({ edgeNeighbours, playerColors, vertices }: Props
             <Edge
               key={`Edge: [${x1}, ${y1}, ${z1}], [${x2}, ${y2}, ${z2}]`}
               fromVertex={fromVertex}
-              fromVertexOwnershipPercentage={edgeNeighbours[edgeNeighbour].contest.fromVertex}
+              fromVertexOwnershipPercentage={contestProgress}
+              // fromVertexOwnershipPercentage={edgeNeighbours[edgeNeighbour].contest.fromVertex} // TODO: Put this back when contest is working
               toVertex={toVertex}
-              toVertexOwnershipPercentage={edgeNeighbours[edgeNeighbour].contest.toVertex}
+              toVertexOwnershipPercentage={contestProgress}
+              // toVertexOwnershipPercentage={edgeNeighbours[edgeNeighbour].contest.toVertex} // TODO: Put this back when contest is working
               playerColors={playerColors}
             />
           );

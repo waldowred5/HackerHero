@@ -1,10 +1,11 @@
-import { useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 import { Group, Mesh } from 'three';
 import { Text } from '@react-three/drei';
 import { ThreeEvent, useFrame } from '@react-three/fiber';
 import { Vertex } from '@/store/vertex/types';
 import { PLAYER, PLAYER_COLOR } from '@/store/player/types';
+import { folder, useControls } from 'leva';
 
 interface Props {
   handleHackBotCreation: (vertexId: string) => void,
@@ -18,6 +19,11 @@ export const VertexModel = ({ handleHackBotCreation, handleHackBotDeletion, play
   const ref = useRef<Mesh | null>(null);
   const textRef = useRef<Group | null>(null);
   const { owner } = vertex;
+  const [currentColor, setCurrentColor] = useState();
+
+  useEffect(() => {
+    setCurrentColor(playerColors[PLAYER[owner]].vertex);
+  }, [owner]);
 
   useFrame((state) => {
     const { camera } = state;
@@ -42,16 +48,6 @@ export const VertexModel = ({ handleHackBotCreation, handleHackBotDeletion, play
     handleHackBotDeletion(vertex.uuid);
   };
 
-  const changeVertexColorOnEnter = (event: ThreeEvent<PointerEvent>, player: keyof typeof PLAYER) => {
-    // @ts-ignore
-    event.eventObject.material.color = new THREE.Color(playerColors[player].hackBot); // TODO: Object key access
-  };
-
-  const changeVertexColorOnLeave = (event: ThreeEvent<PointerEvent>, player: keyof typeof PLAYER) => {
-    // @ts-ignore
-    event.eventObject.material.color = new THREE.Color(playerColors[player].vertex); // TODO: Object key access
-  };
-
   return (
     <>
       {
@@ -61,12 +57,13 @@ export const VertexModel = ({ handleHackBotCreation, handleHackBotDeletion, play
             position={vertex.vector}
             onClick={() => leftClickHandler()}
             onContextMenu={() => rightClickHandler()}
-            onPointerEnter={(event) => changeVertexColorOnEnter(event, owner)}
-            onPointerLeave={(event) => changeVertexColorOnLeave(event, owner)}
+            onPointerEnter={() => setCurrentColor(playerColors[PLAYER[owner]].hackBot)}
+            onPointerLeave={() => setCurrentColor(playerColors[PLAYER[owner]].vertex)}
           >
             <sphereGeometry args={[0.06, 32, 32]}/>
             <meshBasicMaterial
-              color={playerColors[PLAYER[owner]].vertex}
+              color={currentColor}
+              toneMapped={false}
             />
           </mesh>
           <group

@@ -1,8 +1,8 @@
 varying vec3 vPosition;
 
-uniform vec3 uCylinderColorBase;  // Grey color
-uniform vec3 uCylinderColorFromVertex;  // Blue color
-uniform vec3 uCylinderColorToVertex;  // Red color
+uniform vec3 uCylinderColorBase;
+uniform vec3 uCylinderColorFromVertex;
+uniform vec3 uCylinderColorToVertex;
 uniform float uCylinderDistance;
 uniform float uFromVertexOwnershipPercentage;
 uniform float uToVertexOwnershipPercentage;

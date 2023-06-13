@@ -7,6 +7,14 @@ export default create<RelationState>((set) => {
     adjacencyMap: {},
     edgeNeighbours: {},
 
+    // Debug
+    contestProgress: 0,
+    updateContestProgress: (newProgress) => {
+      set(() => ({
+        contestProgress: newProgress,
+      }));
+    },
+
     // Actions
     createAdjacencyMap: (
       {
@@ -81,8 +89,8 @@ export default create<RelationState>((set) => {
                 ...edgeAcc,
                 [edge.uuid]: {
                   contest: {
-                    fromVertex: 0.3,
-                    toVertex: 0.3,
+                    fromVertex: state.contestProgress,
+                    toVertex: state.contestProgress,
                   },
                   distance: edge.distance,
                   fromVertexId: edge.fromVertexId,
