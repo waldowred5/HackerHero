@@ -17,6 +17,7 @@ void main() {
     thresholdOne = step(fromVertexValue, thresholdOne);
     thresholdTwo = step(toVertexValue, thresholdTwo);
 
+    // TODO: Replace if statements with clamps (performance improvement)
     vec3 color;
     if (thresholdOne <= 0.5) {
         color = uCylinderColorFromVertex;
