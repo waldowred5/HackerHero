@@ -165,7 +165,7 @@ export const NetworkController = () => {
 
   // Debug
   useControls('Network Model', {
-    edge: folder({
+    'Edge': folder({
       maxLengthPercentage: {
         value: maxEdgeLengthPercentage,
         min: 0,
@@ -184,7 +184,7 @@ export const NetworkController = () => {
         }
       }
     }),
-    match: folder({
+    'Match': folder({
       endMatch: button(() => {
         endMatch();
       }),
@@ -194,7 +194,7 @@ export const NetworkController = () => {
         startMatch();
       }),
     }),
-    vertex: folder({
+    'Vertex': folder({
       number: {
         value: vertexNumber,
         min: 0,
@@ -266,6 +266,8 @@ export const NetworkController = () => {
       updateSelectedHackBotBlueprint(HACK_BOT_CLASS_LIST.FLOOD_HACK);
     }
   });
+
+
 
   // TODO: Set minDistance/maxDistance dynamically based on network radius size
   return (

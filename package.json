@@ -11,7 +11,7 @@
   },
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build && electron-builder",
+    "build": "vite build && electron-builder",
     "preview": "vite preview",
     "pree2e": "vite build --mode=test",
     "start": "electron-forge start",
@@ -32,6 +32,7 @@
     "eslint-plugin-import": "^2.27.5",
     "fbemitter": "^3.0.0",
     "leva": "^0.9.34",
+    "r3f-perf": "^7.1.2",
     "react-icons": "^4.8.0",
     "styled-components": "^6.0.0-rc.1",
     "three": "^0.152.2",

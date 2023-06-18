@@ -6,11 +6,15 @@ import { useControls } from 'leva';
 export const FX = () => {
   const {
     bloomEnabled,
+    statsDebugPanelEnabled,
     updateBloomEnabled,
+    updateStatsDebugPanelEnabled,
   } = useGameSettingState((state) => {
     return {
       bloomEnabled: state.bloomEnabled,
+      statsDebugPanelEnabled: state.statsDebugPanelEnabled,
       updateBloomEnabled: state.updateBloomEnabled,
+      updateStatsDebugPanelEnabled: state.updateStatsDebugPanelEnabled,
     };
   }, shallow);
 
@@ -20,6 +24,12 @@ export const FX = () => {
       value: bloomEnabled,
       onChange: (value: boolean) => {
         updateBloomEnabled(value);
+      }
+    },
+    statsEnabled: {
+      value: statsDebugPanelEnabled,
+      onChange: (value: boolean) => {
+        updateStatsDebugPanelEnabled(value);
       }
     }
   });

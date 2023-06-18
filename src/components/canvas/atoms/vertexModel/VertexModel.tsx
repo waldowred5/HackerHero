@@ -1,11 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
-import * as THREE from 'three';
 import { Group, Mesh } from 'three';
 import { Text } from '@react-three/drei';
-import { ThreeEvent, useFrame } from '@react-three/fiber';
+import { useFrame } from '@react-three/fiber';
 import { Vertex } from '@/store/vertex/types';
 import { PLAYER, PLAYER_COLOR } from '@/store/player/types';
-import { folder, useControls } from 'leva';
 
 interface Props {
   handleHackBotCreation: (vertexId: string) => void,

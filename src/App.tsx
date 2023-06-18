@@ -5,11 +5,24 @@ import { InterfaceManager } from './components/ui/interfaceManager/InterfaceMana
 import { Canvas } from '@react-three/fiber';
 import { SceneManager } from './components/managers/sceneManager/SceneManager';
 import { useEffect } from 'react';
+import { Perf } from 'r3f-perf';
+
+import useGameSettingState from '@/store/gameSettings/useGameSettingState';
+import { shallow } from 'zustand/shallow';
+
 
 export const App = () => {
   useEffect(() => {
     document.addEventListener('contextmenu', event => event.preventDefault());
   }, []);
+
+  const {
+    statsDebugPanelEnabled,
+  } = useGameSettingState((state) => {
+    return {
+      statsDebugPanelEnabled: state.statsDebugPanelEnabled,
+    };
+  }, shallow);
 
   return (
     <>
@@ -26,7 +39,6 @@ export const App = () => {
         {/* TODO: Extract camera to camera manager component */}
         <Canvas
           shadows
-          // style={{ position: 'static' }}
           camera={{
             fov: 75,
             near: 0.1,
@@ -34,6 +46,12 @@ export const App = () => {
             position: [0, 0, 5],
           }}
         >
+          {
+            statsDebugPanelEnabled && <Perf
+              deepAnalyze={true}
+              position='bottom-right'
+            />
+          }
           <SceneManager/>
         </Canvas>
       </KeyboardInputManager>

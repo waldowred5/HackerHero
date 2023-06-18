@@ -1,4 +1,4 @@
-import { Suspense } from 'react';
+import { Suspense, useState } from 'react';
 import { NetworkOrb } from '../../atoms/networkOrb/NetworkOrb';
 import { EdgeCollection } from '../../molecules/edgeCollection/EdgeCollection';
 import { VertexCollection } from '../../molecules/vertexCollection/VertexCollection';
@@ -6,6 +6,10 @@ import { EdgeNeighbours } from '@/store/relation/types';
 import { PLAYER_COLOR } from '@/store/player/types';
 import { HackBotMap } from '@/store/hackBot/types';
 import { VertexMap } from '@/store/vertex/types';
+import {
+  InstancedVertexCollection
+} from '@/components/canvas/molecules/instancedVertexCollection/InstancedVertexCollection';
+import { folder, useControls } from 'leva';
 
 interface Props {
   orbColor: {
@@ -41,6 +45,17 @@ export const NetworkModel = (
     updateOrbRadius,
     vertices,
   }: Props) => {
+  const [useInstancing, setUseInstancing] = useState<boolean>(true);
+
+  useControls('Network Model', {
+    'Performance': folder({
+      'Instanced': {
+        value: useInstancing,
+        onChange: (value: boolean) => setUseInstancing(value),
+      }
+    })
+  });
+
   return (
     <>
       <NetworkOrb
@@ -52,13 +67,23 @@ export const NetworkModel = (
         updateOrbRadius={updateOrbRadius}
       />
 
-      <VertexCollection
-        hackBots={hackBots}
-        handleHackBotCreation={handleHackBotCreation}
-        handleHackBotDeletion={handleHackBotDeletion}
-        playerColors={playerColors}
-        vertices={vertices}
-      />
+      {
+        useInstancing ?
+          <InstancedVertexCollection
+            hackBots={hackBots}
+            handleHackBotCreation={handleHackBotCreation}
+            handleHackBotDeletion={handleHackBotDeletion}
+            playerColors={playerColors}
+            vertices={vertices}
+          /> :
+          <VertexCollection
+            hackBots={hackBots}
+            handleHackBotCreation={handleHackBotCreation}
+            handleHackBotDeletion={handleHackBotDeletion}
+            playerColors={playerColors}
+            vertices={vertices}
+          />
+      }
 
       <Suspense fallback={null}>
         <EdgeCollection
@@ -68,5 +93,6 @@ export const NetworkModel = (
         />
       </Suspense>
     </>
-  );
+  )
+    ;
 };
