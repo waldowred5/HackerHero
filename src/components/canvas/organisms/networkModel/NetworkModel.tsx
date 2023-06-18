@@ -2,7 +2,7 @@ import { Suspense, useState } from 'react';
 import { NetworkOrb } from '../../atoms/networkOrb/NetworkOrb';
 import { EdgeCollection } from '../../molecules/edgeCollection/EdgeCollection';
 import { VertexCollection } from '../../molecules/vertexCollection/VertexCollection';
-import { EdgeNeighbours } from '@/store/relation/types';
+import { EdgeNeighbours, HackBotVertexMap } from '@/store/relation/types';
 import { PLAYER_COLOR } from '@/store/player/types';
 import { HackBotMap } from '@/store/hackBot/types';
 import { VertexMap } from '@/store/vertex/types';
@@ -20,6 +20,7 @@ interface Props {
   edgeNeighbours: EdgeNeighbours,
   playerColors: PLAYER_COLOR,
   hackBots: HackBotMap,
+  hackBotVertexMap: HackBotVertexMap,
   handleHackBotCreation: (vertexId: string) => void,
   handleHackBotDeletion: (vertexId: string) => void,
   orbOpacity: number,
@@ -36,6 +37,7 @@ export const NetworkModel = (
     edgeNeighbours,
     playerColors,
     hackBots,
+    hackBotVertexMap,
     handleHackBotCreation,
     handleHackBotDeletion,
     orbOpacity,
@@ -71,6 +73,7 @@ export const NetworkModel = (
         useInstancing ?
           <InstancedVertexCollection
             hackBots={hackBots}
+            hackBotVertexMap={hackBotVertexMap}
             handleHackBotCreation={handleHackBotCreation}
             handleHackBotDeletion={handleHackBotDeletion}
             playerColors={playerColors}
@@ -78,6 +81,7 @@ export const NetworkModel = (
           /> :
           <VertexCollection
             hackBots={hackBots}
+            hackBotVertexMap={hackBotVertexMap}
             handleHackBotCreation={handleHackBotCreation}
             handleHackBotDeletion={handleHackBotDeletion}
             playerColors={playerColors}
@@ -88,6 +92,7 @@ export const NetworkModel = (
       <Suspense fallback={null}>
         <EdgeCollection
           edgeNeighbours={edgeNeighbours}
+          hackBotVertexMap={hackBotVertexMap}
           playerColors={playerColors}
           vertices={vertices}
         />

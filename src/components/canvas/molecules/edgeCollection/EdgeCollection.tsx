@@ -1,17 +1,17 @@
 import { Edge } from '../../atoms/edge/Edge';
-import { EdgeNeighbours } from '@/store/relation/types';
+import { EdgeNeighbours, HackBotVertexMap } from '@/store/relation/types';
 import { PLAYER_COLOR } from '@/store/player/types';
 import { Vertex, VertexMap } from '@/store/vertex/types';
-import { useEffect } from 'react';
 import useRelationState from '@/store/relation/useRelationState';
 
 interface Props {
   edgeNeighbours: EdgeNeighbours;
+  hackBotVertexMap: HackBotVertexMap;
   playerColors: PLAYER_COLOR;
   vertices: VertexMap;
 }
 
-export const EdgeCollection = ({ edgeNeighbours, playerColors, vertices }: Props) => {
+export const EdgeCollection = ({ edgeNeighbours, hackBotVertexMap, playerColors, vertices }: Props) => {
   const { contestProgress } = useRelationState((state) => ({
     contestProgress: state.contestProgress,
   }));
@@ -34,6 +34,7 @@ export const EdgeCollection = ({ edgeNeighbours, playerColors, vertices }: Props
               key={`Edge: [${x1}, ${y1}, ${z1}], [${x2}, ${y2}, ${z2}]`}
               fromVertex={fromVertex}
               fromVertexOwnershipPercentage={contestProgress}
+              hackBotVertexMap={hackBotVertexMap}
               // fromVertexOwnershipPercentage={edgeNeighbours[edgeNeighbour].contest.fromVertex} // TODO: Put this back when contest is working
               toVertex={toVertex}
               toVertexOwnershipPercentage={contestProgress}

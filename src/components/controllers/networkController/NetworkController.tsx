@@ -91,12 +91,14 @@ export const NetworkController = () => {
   const {
     adjacencyMap,
     edgeNeighbours,
+    hackBotVertexMap,
     contestProgress,
     updateContestProgress,
   } = useRelationState((state) => {
     return {
       adjacencyMap: state.adjacencyMap,
       edgeNeighbours: state.edgeNeighbours,
+      hackBotVertexMap: state.hackBotVertexMap,
       contestProgress: state.contestProgress,
       updateContestProgress: state.updateContestProgress,
     };
@@ -293,6 +295,7 @@ export const NetworkController = () => {
             orbColor={orbColor}
             edgeNeighbours={edgeNeighbours}
             hackBots={hackBots}
+            hackBotVertexMap={hackBotVertexMap}
             handleHackBotCreation={handleHackBotCreation}
             handleHackBotDeletion={handleHackBotDeletion}
             maxEdgeLengthPercentage={maxEdgeLengthPercentage}

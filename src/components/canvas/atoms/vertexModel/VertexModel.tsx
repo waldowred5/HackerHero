@@ -4,8 +4,10 @@ import { Text } from '@react-three/drei';
 import { useFrame } from '@react-three/fiber';
 import { Vertex } from '@/store/vertex/types';
 import { PLAYER, PLAYER_COLOR } from '@/store/player/types';
+import { HackBotVertexMap } from '@/store/relation/types';
 
 interface Props {
+  hackBotVertexMap: HackBotVertexMap,
   handleHackBotCreation: (vertexId: string) => void,
   handleHackBotDeletion: (vertexId: string) => void,
   playerColors: PLAYER_COLOR,
@@ -13,10 +15,10 @@ interface Props {
   uuid: string,
 }
 
-export const VertexModel = ({ handleHackBotCreation, handleHackBotDeletion, playerColors, vertex, uuid }: Props) => {
+export const VertexModel = ({ hackBotVertexMap, handleHackBotCreation, handleHackBotDeletion, playerColors, vertex, uuid }: Props) => {
   const ref = useRef<Mesh | null>(null);
   const textRef = useRef<Group | null>(null);
-  const { owner } = vertex;
+  const owner = hackBotVertexMap[vertex.uuid].owner;
   const [currentColor, setCurrentColor] = useState();
 
   useEffect(() => {
@@ -37,7 +39,7 @@ export const VertexModel = ({ handleHackBotCreation, handleHackBotDeletion, play
   };
 
   const rightClickHandler = () => {
-    if (!vertex.hackBotId) {
+    if (!hackBotVertexMap[vertex.uuid].hackBotId) {
       console.log('No HackBot to remove!');
 
       return;

@@ -31,6 +31,7 @@ export default create<NetworkState>((set, get) => {
       });
 
       useRelationState.getState().createEdgeNeighbours();
+      useRelationState.getState().createHackBotVertexMap();
 
       useHackBotState.getState().resetHackBots();
     },

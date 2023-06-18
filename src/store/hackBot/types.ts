@@ -63,8 +63,8 @@ export interface HackBotState {
   selectedHackBotBlueprint: string,
 
   // Actions
-  createHackBot: (uuid: string, player: keyof typeof PLAYER) => void,
-  deleteHackBot: (uuid: string) => void
+  createHackBot: (vertexId: string, hackBotId: string, player: keyof typeof PLAYER) => void,
+  deleteHackBot: (vertexId: string, hackBotToDeleteId: string) => void
   resetHackBots: () => void,
   updateSelectedHackBotBlueprint: (hackBotBlueprint: string) => void,
 }

@@ -6,9 +6,11 @@ import { Color, InstancedBufferAttribute, InstancedMesh, Object3D } from 'three'
 import { VertexModelLabel } from '@/components/canvas/atoms/vertexModelLabel/VertexModelLabel';
 import { HackBotModel } from '@/components/canvas/atoms/hackBotModel/HackBotModel';
 import { Intersection } from '@react-three/fiber';
+import { HackBotVertexMap } from '@/store/relation/types';
 
 interface Props {
   hackBots: HackBotMap,
+  hackBotVertexMap: HackBotVertexMap,
   handleHackBotCreation: (vertexId: string) => void,
   handleHackBotDeletion: (vertexId: string) => void,
   playerColors: PLAYER_COLOR,
@@ -20,11 +22,13 @@ interface Props {
 // ✅ TODO: Add hackBot to vertex
 // ✅ TODO: Remove hackBot from vertex
 // ✅ TODO: Change color of vertex on hackBot add / remove
-// TODO: Remove vertices dependency (performance improvement)
+// TODO: Resolve app freeze on hackBot add / remove (performance improvement)
+// TODO: Update vertex color on level reset
 
 export const InstancedVertexCollection = (
   {
     hackBots,
+    hackBotVertexMap,
     handleHackBotCreation,
     handleHackBotDeletion,
     playerColors,
@@ -33,10 +37,6 @@ export const InstancedVertexCollection = (
   const ref = useRef<InstancedMesh | null>(null);
   const count = Object.entries(vertices).length;
   const transform = new Object3D();
-
-  const neutralColor = new Color('lightgrey');
-  const playerOneColor = new Color('cyan');
-  const playerTwoColor = new Color('orange');
 
   const [prevInstanceId, setPrevInstanceId] = useState<number>(-1);
   const [instanceIdMap, setInstanceIdMap] = useState<string[]>([]);
@@ -59,7 +59,7 @@ export const InstancedVertexCollection = (
       transform.updateMatrix();
       ref.current?.setMatrixAt(index, transform.matrix);
 
-      const color = playerColors[PLAYER[vertex.owner]].edge;
+      const color = playerColors[PLAYER[hackBotVertexMap[vertex.uuid].owner]].edge;
       ref.current?.setColorAt(index, new Color(color[0], color[1], color[2]));
     });
 
@@ -69,12 +69,12 @@ export const InstancedVertexCollection = (
     ref.current.instanceMatrix.needsUpdate = true;
 
     console.log('InstancedVertexCollection: useEffect: triggered');
-  }, [vertices]); // TODO: Avoid re-rendering on hackBot change
+  }, [vertices]);
 
   // TODO: Performance Improvement
   // TODO: This function runs too slowly, as a result color set is delayed and sometimes not reset onPointLeave
   const setColor = (event, eventObject: InstancedMesh, intersections: Intersection[], colorCatgory) => {
-    const owner = vertices[instanceIdMap[event.instanceId]].owner;
+    const owner = hackBotVertexMap[instanceIdMap[event.instanceId]].owner;
     const oldColor = playerColors[PLAYER[owner]].edge;
     const newColor = playerColors[PLAYER[owner]][colorCatgory];
 
@@ -99,7 +99,7 @@ export const InstancedVertexCollection = (
   };
 
   const rightClickHandler = (event) => {
-    if (!vertices[instanceIdMap[event.instanceId]].hackBotId) {
+    if (!hackBotVertexMap[instanceIdMap[event.instanceId]].hackBotId) {
       console.log('No HackBot to remove!');
 
       return;
@@ -134,11 +134,11 @@ export const InstancedVertexCollection = (
                 uuid={vertex[0]}
               />
               {
-                vertex[1].hackBotId && <HackBotModel
-                  key={`HackBot: ${vertex[1].hackBotId}`}
-                  owner={vertex[1].owner}
+                hackBotVertexMap[vertex[1].uuid].hackBotId && <HackBotModel
+                  key={`HackBot: ${hackBotVertexMap[vertex[1].uuid].hackBotId}`}
+                  owner={hackBotVertexMap[vertex[1].uuid].owner}
                   playerColors={playerColors}
-                  hackBotClass={hackBots[vertex[1].hackBotId].botClass}
+                  hackBotClass={hackBots[hackBotVertexMap[vertex[1].uuid].hackBotId].botClass}
                   vector={vertex[1].vector}
                 />
               }

@@ -1,4 +1,5 @@
 import { VertexMap } from '@/store/vertex/types';
+import { PLAYER } from '@/store/player/types';
 
 export type AdjacencyEdge = {
   distance: number,
@@ -25,6 +26,13 @@ export type EdgeNeighbours = {
   },
 }
 
+export type HackBotVertexMap = {
+  [key: string]: {
+    hackBotId: string | null,
+    owner: keyof typeof PLAYER,
+  }
+}
+
 export interface GenerateAdjacencyMapProps {
   radius: number,
   maxEdgeLengthPercentage: number,
@@ -34,6 +42,7 @@ export interface GenerateAdjacencyMapProps {
 export interface RelationState {
   adjacencyMap: AdjacencyMap,
   edgeNeighbours: EdgeNeighbours,
+  hackBotVertexMap: HackBotVertexMap,
 
   // Debug
   contestProgress: number,
@@ -48,4 +57,6 @@ export interface RelationState {
     }: GenerateAdjacencyMapProps
   ) => void,
   createEdgeNeighbours: () => void,
+  createHackBotVertexMap: () => void,
+  updateHackBotVertexMap: (vertexId: string, hackBotId: string | null, owner: keyof typeof PLAYER) => void,
 }

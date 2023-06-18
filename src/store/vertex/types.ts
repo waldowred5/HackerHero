@@ -3,8 +3,8 @@ import { PLAYER } from '@/store/player/types';
 
 export type Vertex = {
   vector: THREE.Vector3,
-  hackBotId: string | null,
-  owner: keyof typeof PLAYER,
+  // hackBotId: string | null,
+  // owner: keyof typeof PLAYER,
   uuid: string,
 }
 
@@ -34,6 +34,6 @@ export interface VertexState {
   handleHackBotCreation: (vertexId: string) => void,
   handleHackBotDeletion: (vertexId: string) => void,
   updateVertexNumber: (newVertexNumber: number) => void,
-  updateVertexOwner: (vertexId: string, newVertexOwner: keyof typeof PLAYER) => void,
+  // updateVertexOwner: (vertexId: string, newVertexOwner: keyof typeof PLAYER) => void,
   updateVertexPlacementChaosFactor: (newVertexPlacementChaosFactor: number) => void,
 }

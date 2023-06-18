@@ -1,12 +1,14 @@
-import * as THREE from 'three';
 import vertexShader from '../../../../assets/shaders/cylinders/vertex.glsl';
 import fragmentShader from '../../../../assets/shaders/cylinders/fragment.glsl';
 import { Vertex } from '@/store/vertex/types';
 import { PLAYER, PLAYER_COLOR } from '@/store/player/types';
+import { HackBotVertexMap } from '@/store/relation/types';
+import { CylinderGeometry, Mesh, ShaderMaterial, Vector3 } from 'three';
 
 interface Props {
   fromVertex: Vertex;
   fromVertexOwnershipPercentage: number;
+  hackBotVertexMap: HackBotVertexMap;
   toVertex: Vertex;
   toVertexOwnershipPercentage: number;
   playerColors: PLAYER_COLOR;
@@ -16,6 +18,7 @@ export const Edge = (
   {
     fromVertex,
     fromVertexOwnershipPercentage,
+    hackBotVertexMap,
     toVertex,
     toVertexOwnershipPercentage,
     playerColors
@@ -27,7 +30,7 @@ export const Edge = (
   };
 
   const distance = fromVertex.vector.distanceTo(toVertex.vector);
-  const cylinderGeom = new THREE.CylinderGeometry(
+  const cylinderGeom = new CylinderGeometry(
     cylinderRadius,
     cylinderRadius,
     distance,
@@ -41,27 +44,27 @@ export const Edge = (
   const getColor = (player: PLAYER) => {
     // TODO: Object key access
     // TODO: Clean this up
-    return new THREE.Vector3(
+    return new Vector3(
       playerColors[player]['edge'][0],
       playerColors[player]['edge'][1],
       playerColors[player]['edge'][2],
     );
   };
 
-  const cylinderMaterial = new THREE.ShaderMaterial({
+  const cylinderMaterial = new ShaderMaterial({
     vertexShader,
     fragmentShader,
     uniforms: {
       uCylinderColorBase: { value: getColor(PLAYER.NEUTRAL) },
-      uCylinderColorFromVertex: { value: getColor(PLAYER[fromVertex.owner]) },
-      uCylinderColorToVertex: { value: getColor(PLAYER[toVertex.owner]) },
+      uCylinderColorFromVertex: { value: getColor(PLAYER[hackBotVertexMap[fromVertex.uuid].owner]) },
+      uCylinderColorToVertex: { value: getColor(PLAYER[hackBotVertexMap[fromVertex.uuid].owner]) },
       uCylinderDistance: { value: distance },
       uFromVertexOwnershipPercentage: { value: fromVertexOwnershipPercentage },
       uToVertexOwnershipPercentage: { value: toVertexOwnershipPercentage },
     }
   });
 
-  const cylinder = new THREE.Mesh(
+  const cylinder = new Mesh(
     cylinderGeom,
     cylinderMaterial,
   );

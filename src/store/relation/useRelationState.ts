@@ -1,11 +1,14 @@
 import { create } from 'zustand';
 import { RelationState } from '@/store/relation/types';
 import { v4 as uuidv4 } from 'uuid';
+import useVertexState from '@/store/vertex/useVertexState';
+import { PLAYER } from '@/store/player/types';
 
 export default create<RelationState>((set) => {
   return {
     adjacencyMap: {},
     edgeNeighbours: {},
+    hackBotVertexMap: {},
 
     // Debug
     contestProgress: 0,
@@ -107,6 +110,42 @@ export default create<RelationState>((set) => {
 
         return {
           edgeNeighbours,
+        };
+      });
+    },
+
+    createHackBotVertexMap: () => {
+      console.log('Generating HackBot Vertex Map...');
+
+      set(() => {
+        const hackBotVertexMap = Object.entries(useVertexState.getState().vertices).reduce(
+          (acc, vertex) => {
+            return {
+              ...acc,
+              [vertex[1].uuid]: {
+                hackBotId: null,
+                owner: PLAYER.NEUTRAL,
+              },
+            };
+          }, {}
+        );
+
+        return {
+          hackBotVertexMap,
+        };
+      });
+    },
+
+    updateHackBotVertexMap: (vertexId, hackBotId, owner) => {
+      set((state) => {
+        return {
+          hackBotVertexMap: {
+            ...state.hackBotVertexMap,
+            [vertexId]: {
+              hackBotId,
+              owner,
+            },
+          },
         };
       });
     },
