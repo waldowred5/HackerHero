@@ -1,8 +1,8 @@
 import { Vertex, VertexMap } from '@/store/vertex/types';
 import { PLAYER, PLAYER_COLOR } from '@/store/player/types';
 import { HackBotMap } from '@/store/hackBot/types';
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
-import { Color, InstancedBufferAttribute, InstancedMesh, Object3D } from 'three';
+import { useEffect, useRef, useState } from 'react';
+import { Color, InstancedMesh, Object3D } from 'three';
 import { VertexModelLabel } from '@/components/canvas/atoms/vertexModelLabel/VertexModelLabel';
 import { HackBotModel } from '@/components/canvas/atoms/hackBotModel/HackBotModel';
 import { Intersection } from '@react-three/fiber';
@@ -68,7 +68,7 @@ export const InstancedVertexCollection = (
     // Update the instance
     ref.current.instanceMatrix.needsUpdate = true;
 
-    console.log('InstancedVertexCollection: useEffect: triggered');
+    console.log('InstancedVertexCollection: useMemo: triggered');
   }, [vertices]);
 
   // TODO: Performance Improvement

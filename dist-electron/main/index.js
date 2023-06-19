@@ -1,8 +1,27 @@
 "use strict";
 const electron = require("electron");
+const os = require("os");
+const path = require("path");
 const node_os = require("node:os");
 const node_path = require("node:path");
 const electronUpdater = require("electron-updater");
+function _interopNamespaceDefault(e) {
+  const n = Object.create(null, { [Symbol.toStringTag]: { value: "Module" } });
+  if (e) {
+    for (const k in e) {
+      if (k !== "default") {
+        const d = Object.getOwnPropertyDescriptor(e, k);
+        Object.defineProperty(n, k, d.get ? d : {
+          enumerable: true,
+          get: () => e[k]
+        });
+      }
+    }
+  }
+  n.default = e;
+  return Object.freeze(n);
+}
+const path__namespace = /* @__PURE__ */ _interopNamespaceDefault(path);
 function update(win2) {
   electronUpdater.autoUpdater.autoDownload = false;
   electronUpdater.autoUpdater.disableWebInstaller = false;
@@ -107,9 +126,15 @@ async function createWindow() {
   });
   update(win);
 }
-electron.app.whenReady().then(() => {
+electron.app.whenReady().then(async () => {
   initIpcHandlers();
-  createWindow();
+  await createWindow();
+  const reactDevToolsPath = path__namespace.join(
+    os.homedir(),
+    "/Documents/coding-projects/game-dev/react-dev-tools/ReactDevTools"
+    // '/Library/Application Support/Google/Chrome/Default/Extensions/fmkadmapgofadopljbjfkapdkoienihi/4.27.8_0'
+  );
+  await electron.session.defaultSession.loadExtension(reactDevToolsPath);
 });
 electron.app.on("window-all-closed", () => {
   win = null;
