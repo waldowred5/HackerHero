@@ -48,7 +48,6 @@ export const App = () => {
         >
           {
             statsDebugPanelEnabled && <Perf
-              deepAnalyze={true}
               position='bottom-right'
             />
           }

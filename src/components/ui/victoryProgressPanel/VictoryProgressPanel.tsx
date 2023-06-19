@@ -6,22 +6,23 @@ import {
 import { VertexMap } from '@/store/vertex/types';
 import { useEffect, useState } from 'react';
 import { PLAYER } from '@/store/player/types';
+import { HackBotVertexMap } from '@/store/relation/types';
 
 interface Props {
-  vertices: VertexMap;
+  hackBotVertexMap: HackBotVertexMap;
 }
 
 // TODO: Upgrade to include contest progress for finer granularity
-export const VictoryProgressPanel = ({ vertices }: Props) => {
+export const VictoryProgressPanel = ({ hackBotVertexMap }: Props) => {
   const [playerVictoryProgress, setPlayerVictoryProgress] = useState(0);
   const [opponentVictoryProgress, setOpponentVictoryProgress] = useState(0);
 
   useEffect(() => {
     let playerVictoryCount = 0;
     let opponentVictoryCount = 0;
-    const totalCount = Object.values(vertices).length;
+    const totalCount = Object.values(hackBotVertexMap).length;
 
-    Object.values(vertices).forEach((vertex) => {
+    Object.values(hackBotVertexMap).forEach((vertex) => {
       if (vertex.owner === PLAYER.PLAYER_1) {
         playerVictoryCount++;
       } else if (vertex.owner === PLAYER.PLAYER_2) {
@@ -31,7 +32,7 @@ export const VictoryProgressPanel = ({ vertices }: Props) => {
 
     setPlayerVictoryProgress((playerVictoryCount / totalCount) * 100);
     setOpponentVictoryProgress((opponentVictoryCount / totalCount) * 100);
-  }, [vertices]);
+  }, [hackBotVertexMap]);
 
   return (
     <VictoryProgressPanelWrapper>

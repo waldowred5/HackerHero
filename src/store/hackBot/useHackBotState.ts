@@ -11,14 +11,11 @@ export default create<HackBotState>((set, get) => {
 
     // Actions
     createHackBot: (vertexId, hackBotId, player) => {
-      console.log('1');
       const newHackBot: HackBot = {
         ...get().hackBotBlueprints[get().selectedHackBotBlueprint],
         owner: player,
         uuid: hackBotId,
       };
-
-      console.log('2');
 
       // Add new HackBot to HackBots
       set((state) => {
@@ -32,12 +29,8 @@ export default create<HackBotState>((set, get) => {
         };
       });
 
-      console.log('3');
-
       // Add new HackBot to Relation Map
       useRelationState.getState().updateHackBotVertexMap(vertexId, hackBotId, player);
-
-      console.log('4');
     },
 
     deleteHackBot: (vertexId: string, hackBotToDeleteId: string) => {

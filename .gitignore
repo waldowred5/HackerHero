@@ -8,9 +8,9 @@ pnpm-debug.log*
 lerna-debug.log*
 
 node_modules
-dist-blerg
+dist
 dist-ssr
-dist-electron-blerg
+dist-electron
 release
 *.local
 

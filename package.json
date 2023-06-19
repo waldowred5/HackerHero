@@ -19,6 +19,7 @@
     "make": "electron-forge make"
   },
   "dependencies": {
+    "@babel/plugin-transform-typescript": "^7.22.5",
     "@react-three/drei": "^9.68.3",
     "@react-three/fiber": "^8.13.0",
     "@react-three/postprocessing": "^2.14.9",

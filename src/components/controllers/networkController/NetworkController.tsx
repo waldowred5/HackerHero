@@ -1,4 +1,4 @@
-import { Suspense, useEffect, useRef } from 'react';
+import { Suspense, useEffect, useRef, useState } from 'react';
 import { NetworkModel } from '../../canvas/organisms/networkModel/NetworkModel';
 import { button, folder, useControls } from 'leva';
 import { useFrame } from '@react-three/fiber';
@@ -166,6 +166,7 @@ export const NetworkController = () => {
   }, [resourcesPerSecond]);
 
   // Debug
+  const [useInstancing, setUseInstancing] = useState<boolean>(true);
   useControls('Network Model', {
     'Edge': folder({
       maxLengthPercentage: {
@@ -213,6 +214,12 @@ export const NetworkController = () => {
         onChange: (value: number) => {
           updateVertexPlacementChaosFactor(value);
         }
+      }
+    }),
+    'Performance': folder({
+      'Instanced': {
+        value: useInstancing,
+        onChange: (value: boolean) => setUseInstancing(value),
       }
     }),
   });
@@ -306,6 +313,7 @@ export const NetworkController = () => {
             updateOrbColor={updateOrbColor}
             updateOrbOpacity={updateOrbOpacity}
             updateOrbRadius={updateOrbRadius}
+            useInstancing={useInstancing}
             vertices={vertices}
           />
         </RigidBody>

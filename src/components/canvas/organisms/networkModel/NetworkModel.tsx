@@ -28,6 +28,7 @@ interface Props {
   updateOrbColor: (channel: string, newColor: number) => void,
   updateOrbOpacity: (value: number) => void,
   updateOrbRadius: (value: number) => void,
+  useInstancing: boolean;
   vertices: VertexMap,
 }
 
@@ -45,18 +46,9 @@ export const NetworkModel = (
     orbRadius,
     updateOrbColor,
     updateOrbRadius,
+    useInstancing,
     vertices,
   }: Props) => {
-  const [useInstancing, setUseInstancing] = useState<boolean>(true);
-
-  useControls('Network Model', {
-    'Performance': folder({
-      'Instanced': {
-        value: useInstancing,
-        onChange: (value: boolean) => setUseInstancing(value),
-      }
-    })
-  });
 
   return (
     <>
@@ -69,25 +61,15 @@ export const NetworkModel = (
         updateOrbRadius={updateOrbRadius}
       />
 
-      {
-        useInstancing ?
-          <InstancedVertexCollection
-            hackBots={hackBots}
-            hackBotVertexMap={hackBotVertexMap}
-            handleHackBotCreation={handleHackBotCreation}
-            handleHackBotDeletion={handleHackBotDeletion}
-            playerColors={playerColors}
-            vertices={vertices}
-          /> :
-          <VertexCollection
-            hackBots={hackBots}
-            hackBotVertexMap={hackBotVertexMap}
-            handleHackBotCreation={handleHackBotCreation}
-            handleHackBotDeletion={handleHackBotDeletion}
-            playerColors={playerColors}
-            vertices={vertices}
-          />
-      }
+      <VertexCollection
+        hackBots={hackBots}
+        hackBotVertexMap={hackBotVertexMap}
+        handleHackBotCreation={handleHackBotCreation}
+        handleHackBotDeletion={handleHackBotDeletion}
+        playerColors={playerColors}
+        useInstancing={useInstancing} // TODO: Remove when finished performance testing
+        vertices={vertices}
+      />
 
       <Suspense fallback={null}>
         <EdgeCollection

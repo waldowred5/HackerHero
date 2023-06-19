@@ -9,7 +9,7 @@ import useResourceState from '@/store/resource/useResourceState';
 import useSceneState from '@/store/scene/useSceneState';
 import useHackBotState from '@/store/hackBot/useHackBotState';
 import usePlayerState from '@/store/player/usePlayerState';
-import useVertexState from '@/store/vertex/useVertexState';
+import useRelationState from '@/store/relation/useRelationState';
 import { SCENE } from '@/store/scene/types';
 import { VictoryProgressPanel } from '@/components/ui/victoryProgressPanel/VictoryProgressPanel';
 import { HackBotSelectPanel } from '@/components/ui/hackBotSelectPanel/HackBotSelectPanel';
@@ -41,9 +41,9 @@ export const InterfaceManager = () => {
     };
   }, shallow);
 
-  const { vertices } = useVertexState((state) => {
+  const { hackBotVertexMap } = useRelationState((state) => {
     return {
-      vertices: state.vertices,
+      hackBotVertexMap: state.hackBotVertexMap,
     };
   }, shallow);
 
@@ -64,7 +64,7 @@ export const InterfaceManager = () => {
           <TimePanel/>
           <HorizontalPin>
             <VictoryProgressPanel
-              vertices={vertices}
+              hackBotVertexMap={hackBotVertexMap}
             />
           </HorizontalPin>
         </>
