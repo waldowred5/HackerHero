@@ -1,4 +1,4 @@
-import { Suspense, useEffect, useRef } from 'react';
+import { Suspense, useEffect, useRef, useState } from 'react';
 import { NetworkModel } from '../../canvas/organisms/networkModel/NetworkModel';
 import { button, folder, useControls } from 'leva';
 import { useFrame } from '@react-three/fiber';
@@ -91,12 +91,14 @@ export const NetworkController = () => {
   const {
     adjacencyMap,
     edgeNeighbours,
+    hackBotVertexMap,
     contestProgress,
     updateContestProgress,
   } = useRelationState((state) => {
     return {
       adjacencyMap: state.adjacencyMap,
       edgeNeighbours: state.edgeNeighbours,
+      hackBotVertexMap: state.hackBotVertexMap,
       contestProgress: state.contestProgress,
       updateContestProgress: state.updateContestProgress,
     };
@@ -164,8 +166,9 @@ export const NetworkController = () => {
   }, [resourcesPerSecond]);
 
   // Debug
+  const [useInstancing, setUseInstancing] = useState<boolean>(true);
   useControls('Network Model', {
-    edge: folder({
+    'Edge': folder({
       maxLengthPercentage: {
         value: maxEdgeLengthPercentage,
         min: 0,
@@ -184,7 +187,7 @@ export const NetworkController = () => {
         }
       }
     }),
-    match: folder({
+    'Match': folder({
       endMatch: button(() => {
         endMatch();
       }),
@@ -194,7 +197,7 @@ export const NetworkController = () => {
         startMatch();
       }),
     }),
-    vertex: folder({
+    'Vertex': folder({
       number: {
         value: vertexNumber,
         min: 0,
@@ -211,6 +214,12 @@ export const NetworkController = () => {
         onChange: (value: number) => {
           updateVertexPlacementChaosFactor(value);
         }
+      }
+    }),
+    'Performance': folder({
+      'Instanced': {
+        value: useInstancing,
+        onChange: (value: boolean) => setUseInstancing(value),
       }
     }),
   });
@@ -267,6 +276,8 @@ export const NetworkController = () => {
     }
   });
 
+
+
   // TODO: Set minDistance/maxDistance dynamically based on network radius size
   return (
     <Suspense fallback={null}>
@@ -291,6 +302,7 @@ export const NetworkController = () => {
             orbColor={orbColor}
             edgeNeighbours={edgeNeighbours}
             hackBots={hackBots}
+            hackBotVertexMap={hackBotVertexMap}
             handleHackBotCreation={handleHackBotCreation}
             handleHackBotDeletion={handleHackBotDeletion}
             maxEdgeLengthPercentage={maxEdgeLengthPercentage}
@@ -301,6 +313,7 @@ export const NetworkController = () => {
             updateOrbColor={updateOrbColor}
             updateOrbOpacity={updateOrbOpacity}
             updateOrbRadius={updateOrbRadius}
+            useInstancing={useInstancing}
             vertices={vertices}
           />
         </RigidBody>

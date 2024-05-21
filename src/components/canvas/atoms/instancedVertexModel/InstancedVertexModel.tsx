@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
-import { Group, Mesh } from 'three';
-import { Text } from '@react-three/drei';
+import { Group } from 'three';
+import { Text , Instance } from '@react-three/drei';
 import { useFrame } from '@react-three/fiber';
 import { Vertex } from '@/store/vertex/types';
 import { PLAYER, PLAYER_COLOR } from '@/store/player/types';
@@ -15,8 +15,8 @@ interface Props {
   uuid: string,
 }
 
-export const VertexModel = ({ hackBotVertexMap, handleHackBotCreation, handleHackBotDeletion, playerColors, vertex, uuid }: Props) => {
-  const ref = useRef<Mesh | null>(null);
+export const InstancedVertexModel = ({ hackBotVertexMap, handleHackBotCreation, handleHackBotDeletion, playerColors, vertex, uuid }: Props) => {
+  const ref = useRef<Instance | null>(null);
   const textRef = useRef<Group | null>(null);
   const owner = hackBotVertexMap[vertex.uuid].owner;
   const [currentColor, setCurrentColor] = useState();
@@ -32,8 +32,6 @@ export const VertexModel = ({ hackBotVertexMap, handleHackBotCreation, handleHac
     textRef.current?.lookAt(camera.position);
   });
 
-  // TODO: Use raycaster and test for first intersection with a
-  //  vertex to prevent placing / removing 2 HackBots at once
   const leftClickHandler = () => {
     handleHackBotCreation(vertex.uuid);
   };
@@ -52,20 +50,15 @@ export const VertexModel = ({ hackBotVertexMap, handleHackBotCreation, handleHac
     <>
       {
         <>
-          <mesh
+          <Instance
             ref={ref}
             position={vertex.vector}
+            color={currentColor}
             onClick={() => leftClickHandler()}
             onContextMenu={() => rightClickHandler()}
             onPointerEnter={() => setCurrentColor(playerColors[PLAYER[owner]].hackBot)}
             onPointerLeave={() => setCurrentColor(playerColors[PLAYER[owner]].vertex)}
-          >
-            <sphereGeometry args={[0.06, 32, 32]}/>
-            <meshBasicMaterial
-              color={currentColor}
-              toneMapped={false}
-            />
-          </mesh>
+          />
           <group
             ref={textRef}
             position={[

@@ -3,6 +3,7 @@ import { MATCH_PHASE, MatchState } from '@/store/match/types';
 import { RESOURCE } from '@/store/resource/types';
 import useResourceState from '@/store/resource/useResourceState';
 import { PLAYER } from '@/store/player/types';
+import useRelationState from '@/store/relation/useRelationState';
 
 export default create<MatchState>((set, get) => {
   return {
@@ -50,6 +51,8 @@ export default create<MatchState>((set, get) => {
         useResourceState.getState().setResourcesPerSecond(RESOURCE.HACKING_POWER, PLAYER.PLAYER_2, 1);
         useResourceState.getState().setResourcesPerSecond(RESOURCE.COMPUTE_POWER, PLAYER.PLAYER_1, 0);
         useResourceState.getState().setResourcesPerSecond(RESOURCE.COMPUTE_POWER, PLAYER.PLAYER_2, 0);
+
+        useRelationState.getState().createHackBotVertexMap();
 
         set(() => {
           return {

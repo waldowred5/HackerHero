@@ -3,7 +3,7 @@ import { SCENE, SceneState } from '@/store/scene/types';
 
 export default create<SceneState>((set) => {
   return {
-    scene: SCENE.MAIN_MENU,
+    scene: SCENE.MATCH,
 
     // Actions
     updateScene: (newScene: keyof typeof SCENE) => {

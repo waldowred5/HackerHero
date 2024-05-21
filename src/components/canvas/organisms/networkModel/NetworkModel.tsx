@@ -1,11 +1,15 @@
-import { Suspense } from 'react';
+import { Suspense, useState } from 'react';
 import { NetworkOrb } from '../../atoms/networkOrb/NetworkOrb';
 import { EdgeCollection } from '../../molecules/edgeCollection/EdgeCollection';
 import { VertexCollection } from '../../molecules/vertexCollection/VertexCollection';
-import { EdgeNeighbours } from '@/store/relation/types';
+import { EdgeNeighbours, HackBotVertexMap } from '@/store/relation/types';
 import { PLAYER_COLOR } from '@/store/player/types';
 import { HackBotMap } from '@/store/hackBot/types';
 import { VertexMap } from '@/store/vertex/types';
+import {
+  InstancedVertexCollection
+} from '@/components/canvas/molecules/instancedVertexCollection/InstancedVertexCollection';
+import { folder, useControls } from 'leva';
 
 interface Props {
   orbColor: {
@@ -16,6 +20,7 @@ interface Props {
   edgeNeighbours: EdgeNeighbours,
   playerColors: PLAYER_COLOR,
   hackBots: HackBotMap,
+  hackBotVertexMap: HackBotVertexMap,
   handleHackBotCreation: (vertexId: string) => void,
   handleHackBotDeletion: (vertexId: string) => void,
   orbOpacity: number,
@@ -23,6 +28,7 @@ interface Props {
   updateOrbColor: (channel: string, newColor: number) => void,
   updateOrbOpacity: (value: number) => void,
   updateOrbRadius: (value: number) => void,
+  useInstancing: boolean;
   vertices: VertexMap,
 }
 
@@ -32,6 +38,7 @@ export const NetworkModel = (
     edgeNeighbours,
     playerColors,
     hackBots,
+    hackBotVertexMap,
     handleHackBotCreation,
     handleHackBotDeletion,
     orbOpacity,
@@ -39,8 +46,10 @@ export const NetworkModel = (
     orbRadius,
     updateOrbColor,
     updateOrbRadius,
+    useInstancing,
     vertices,
   }: Props) => {
+
   return (
     <>
       <NetworkOrb
@@ -54,19 +63,23 @@ export const NetworkModel = (
 
       <VertexCollection
         hackBots={hackBots}
+        hackBotVertexMap={hackBotVertexMap}
         handleHackBotCreation={handleHackBotCreation}
         handleHackBotDeletion={handleHackBotDeletion}
         playerColors={playerColors}
+        useInstancing={useInstancing} // TODO: Remove when finished performance testing
         vertices={vertices}
       />
 
       <Suspense fallback={null}>
         <EdgeCollection
           edgeNeighbours={edgeNeighbours}
+          hackBotVertexMap={hackBotVertexMap}
           playerColors={playerColors}
           vertices={vertices}
         />
       </Suspense>
     </>
-  );
+  )
+    ;
 };

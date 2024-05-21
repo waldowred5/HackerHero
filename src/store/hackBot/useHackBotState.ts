@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { HACK_BOT_CLASS_LIST, HACK_BOT_CLASS_LIST_MAP, HackBot, HackBotState } from '@/store/hackBot/types';
 import { PLAYER } from '@/store/player/types';
+import useRelationState from '@/store/relation/useRelationState';
 
 export default create<HackBotState>((set, get) => {
   return {
@@ -9,11 +10,11 @@ export default create<HackBotState>((set, get) => {
     selectedHackBotBlueprint: HACK_BOT_CLASS_LIST.GENERATE_HACKING_POWER,
 
     // Actions
-    createHackBot: (uuid: string, player: PLAYER) => {
+    createHackBot: (vertexId, hackBotId, player) => {
       const newHackBot: HackBot = {
         ...get().hackBotBlueprints[get().selectedHackBotBlueprint],
         owner: player,
-        uuid,
+        uuid: hackBotId,
       };
 
       // Add new HackBot to HackBots
@@ -21,19 +22,23 @@ export default create<HackBotState>((set, get) => {
         return {
           hackBots: {
             ...state.hackBots,
-            [uuid]: {
+            [hackBotId]: {
               ...newHackBot,
             }
           },
         };
       });
+
+      // Add new HackBot to Relation Map
+      useRelationState.getState().updateHackBotVertexMap(vertexId, hackBotId, player);
     },
 
-    deleteHackBot: (uuid: string) => {
+    deleteHackBot: (vertexId: string, hackBotToDeleteId: string) => {
+      // Delete HackBot from HackBots
       set((state) => {
         const hackBots =
           Object.keys(state.hackBots)
-            .filter((hackBotId) => hackBotId !== uuid)
+            .filter((hackBotId) => hackBotId !== hackBotToDeleteId)
             .reduce((acc, hackBotId) => {
               acc[hackBotId] = state.hackBots[hackBotId];
 
@@ -44,6 +49,9 @@ export default create<HackBotState>((set, get) => {
           hackBots,
         };
       });
+
+      // Delete HackBot from Relation Map
+      useRelationState.getState().updateHackBotVertexMap(vertexId, null, PLAYER.NEUTRAL);
     },
 
     resetHackBots: () => {

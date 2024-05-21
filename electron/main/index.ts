@@ -1,4 +1,6 @@
-import { app, BrowserWindow, shell, Menu } from 'electron';
+import { app, BrowserWindow, shell, session } from 'electron';
+import { homedir } from 'os';
+import * as path from 'path';
 import { release } from 'node:os';
 import { join } from 'node:path';
 import { update } from './update';
@@ -92,9 +94,17 @@ async function createWindow() {
   update(win);
 }
 
-app.whenReady().then(() => {
+app.whenReady().then(async () => {
   initIpcHandlers();
-  createWindow();
+  await createWindow();
+
+  const reactDevToolsPath = path.join(
+    homedir(),
+    '/Documents/coding-projects/game-dev/react-dev-tools/ReactDevTools'
+    // '/Library/Application Support/Google/Chrome/Default/Extensions/fmkadmapgofadopljbjfkapdkoienihi/4.27.8_0'
+  );
+
+  await session.defaultSession.loadExtension(reactDevToolsPath);
 });
 
 app.on('window-all-closed', () => {

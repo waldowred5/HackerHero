@@ -1,12 +1,41 @@
-import * as THREE from 'three';
-import vertexShader from '../../../../assets/shaders/cylinders/vertex.glsl';
-import fragmentShader from '../../../../assets/shaders/cylinders/fragment.glsl';
 import { Vertex } from '@/store/vertex/types';
 import { PLAYER, PLAYER_COLOR } from '@/store/player/types';
+import { HackBotVertexMap } from '@/store/relation/types';
+import { Vector3 } from 'three';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { shaderMaterial } from '@react-three/drei';
+import { extend } from '@react-three/fiber';
+import { fragmentShader, vertexShader } from '@/components/canvas/atoms/edge/shaders';
+
+const getColor = (player: PLAYER, playerColors) => {
+  // TODO: Object key access
+  // TODO: Clean this up
+  return new Vector3(
+    playerColors[player]['edge'][0],
+    playerColors[player]['edge'][1],
+    playerColors[player]['edge'][2],
+  );
+};
+
+const CustomShader = shaderMaterial(
+  {
+    uCylinderColorBase: null,
+    uCylinderColorFromVertex: null,
+    uCylinderColorToVertex: null,
+    uCylinderDistance: 0.0,
+    uFromVertexOwnershipPercentage: 0.4,
+    uToVertexOwnershipPercentage: 0.4,
+  },
+  vertexShader,
+  fragmentShader,
+);
+
+extend({ CustomShader });
 
 interface Props {
   fromVertex: Vertex;
   fromVertexOwnershipPercentage: number;
+  hackBotVertexMap: HackBotVertexMap;
   toVertex: Vertex;
   toVertexOwnershipPercentage: number;
   playerColors: PLAYER_COLOR;
@@ -16,64 +45,57 @@ export const Edge = (
   {
     fromVertex,
     fromVertexOwnershipPercentage,
+    hackBotVertexMap,
     toVertex,
     toVertexOwnershipPercentage,
-    playerColors
+    playerColors,
   }: Props) => {
+  useEffect(() => {
+    console.log('Edge useEffect triggered');
+  }, []);
+
+  const meshRef = useRef();
+  const geomRef = useRef();
+
   const cylinderRadius = 0.01;
   const cylinderTesselation = {
     radial: 16,
     length: 32,
   };
 
-  const distance = fromVertex.vector.distanceTo(toVertex.vector);
-  const cylinderGeom = new THREE.CylinderGeometry(
-    cylinderRadius,
-    cylinderRadius,
-    distance,
-    cylinderTesselation.radial,
-    cylinderTesselation.length,
-  );
+  const [distance, setDistance] = useState(0.0);
 
-  cylinderGeom.translate(0, distance / 2, 0);
-  cylinderGeom.rotateX(Math.PI / 2);
+  useLayoutEffect(() => {
+    const newDistance = fromVertex.vector.distanceTo(toVertex.vector);
+    setDistance(newDistance);
+    geomRef.current.translate(0, distance / 2, 0);
+    geomRef.current.rotateX(Math.PI / 2);
+  }, [geomRef, toVertex, fromVertex, distance]);
 
-  const getColor = (player: PLAYER) => {
-    // TODO: Object key access
-    // TODO: Clean this up
-    return new THREE.Vector3(
-      playerColors[player]['edge'][0],
-      playerColors[player]['edge'][1],
-      playerColors[player]['edge'][2],
-    );
-  };
-
-  const cylinderMaterial = new THREE.ShaderMaterial({
-    vertexShader,
-    fragmentShader,
-    uniforms: {
-      uCylinderColorBase: { value: getColor(PLAYER.NEUTRAL) },
-      uCylinderColorFromVertex: { value: getColor(PLAYER[fromVertex.owner]) },
-      uCylinderColorToVertex: { value: getColor(PLAYER[toVertex.owner]) },
-      uCylinderDistance: { value: distance },
-      uFromVertexOwnershipPercentage: { value: fromVertexOwnershipPercentage },
-      uToVertexOwnershipPercentage: { value: toVertexOwnershipPercentage },
-    }
-  });
-
-  const cylinder = new THREE.Mesh(
-    cylinderGeom,
-    cylinderMaterial,
-  );
-
-  cylinder.position.copy(toVertex.vector);
-  cylinder.lookAt(fromVertex.vector);
+  useLayoutEffect(() => {
+    meshRef.current.position.copy(toVertex.vector);
+    meshRef.current.lookAt(fromVertex.vector);
+  }, [meshRef, toVertex, fromVertex]);
 
   return (
     <>
-      <primitive
-        object={cylinder}
-      />
+      <mesh
+        ref={meshRef}
+      >
+        <cylinderGeometry
+          ref={geomRef}
+          args={[cylinderRadius, cylinderRadius, distance, cylinderTesselation.radial, cylinderTesselation.length]}
+        />
+        <customShader
+          key={CustomShader.key}
+          uCylinderColorBase={getColor(PLAYER.NEUTRAL, playerColors)}
+          uCylinderColorFromVertex={getColor(PLAYER[hackBotVertexMap[fromVertex.uuid].owner], playerColors)}
+          uCylinderColorToVertex={getColor(PLAYER[hackBotVertexMap[toVertex.uuid].owner], playerColors)}
+          uCylinderDistance={distance}
+          uFromVertexOwnershipPercentage={fromVertexOwnershipPercentage}
+          uToVertexOwnershipPercentage={toVertexOwnershipPercentage}
+        />
+      </mesh>
     </>
   );
 };
